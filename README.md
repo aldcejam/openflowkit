@@ -336,7 +336,16 @@ npm run build
 # upload dist/ to your provider
 ```
 
-No database. No secrets. No infrastructure. One folder.
+**Docker:**
+
+```bash
+docker build -t openflowkit .
+docker run --rm -p 3045:3045 openflowkit
+```
+
+Open [http://localhost:3045](http://localhost:3045). The container serves the production build with nginx, SPA route fallback, long-lived caching for hashed assets, and the same security headers used by the static hosting path.
+
+No database. No secrets. No infrastructure. One folder, or one container.
 
 ---
 
