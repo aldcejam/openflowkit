@@ -106,7 +106,8 @@ function CustomNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
   const subLabelIsNumericSize = !isNaN(Number(subLabelFontSize));
   const subLabelSizeClass = fontSizeClassFor(subLabelFontSize);
   const subLabelFontSizeStyle = subLabelIsNumericSize ? { fontSize: subLabelFontSize + 'px' } : {};
-  const hasIcon = Boolean(iconName) || Boolean(data.customIconUrl);
+  const hasProviderIcon = Boolean(resolvedAssetIconUrl) || Boolean(data.archIconPackId);
+  const hasIcon = Boolean(iconName) || Boolean(data.customIconUrl) || hasProviderIcon;
   const hasLabel = Boolean(data.label?.trim());
   const hasSubLabel = Boolean(data.subLabel);
   const mermaidImportedNodeMetadata = readMermaidImportedNodeMetadataFromData(data);

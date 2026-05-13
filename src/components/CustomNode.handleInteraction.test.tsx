@@ -19,6 +19,14 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
+vi.mock('@/hooks/useProviderShapePreview', () => ({
+  useProviderShapePreview: (
+    packId: string | undefined,
+    shapeId: string | undefined,
+    customIconUrl: string | undefined
+  ) => customIconUrl ?? (packId && shapeId ? `/provider-icons/${packId}/${shapeId}.svg` : null),
+}));
+
 vi.mock('@/lib/reactflowCompat', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/lib/reactflowCompat')>();
 
@@ -128,6 +136,33 @@ describe('CustomNode handle interaction policy', () => {
     const diagnosticsNode = container.querySelector('[data-transform-diagnostics="1"]');
     expect(diagnosticsNode).not.toBeNull();
     expect(diagnosticsNode?.getAttribute('data-transform-family')).toBe('custom');
+  });
+
+  it('renders provider icon previews on generic nodes', () => {
+    render(
+      <CustomNode
+        id="n-provider-icon"
+        type="process"
+        selected={false}
+        dragging={false}
+        zIndex={1}
+        data={{
+          label: 'Lambda',
+          archIconPackId: 'aws-official-starter-v1',
+          archIconShapeId: 'compute-lambda',
+        }}
+        isConnectable={true}
+        xPos={0}
+        yPos={0}
+        sourcePosition={Position.Right}
+        targetPosition={Position.Left}
+      />
+    );
+
+    expect(screen.getByRole('img', { name: 'icon' })).toHaveAttribute(
+      'src',
+      '/provider-icons/aws-official-starter-v1/compute-lambda.svg'
+    );
   });
 
   it('shows an empty-shape prompt instead of seeded fallback text', () => {

@@ -89,30 +89,16 @@ export const IconPicker: React.FC<IconPickerProps> = ({
     onCustomIconChange,
 }) => {
     const [iconSearch, setIconSearch] = useState('');
-    const [iconSource, setIconSource] = useState<IconSource>(
-        getInitialSource(selectedProviderPackId, selectedProviderShapeId, customIconUrl)
-    );
-    const [provider, setProvider] = useState<DomainLibraryCategory>(
+    const [userIconSource, setUserIconSource] = useState<IconSource | null>(null);
+    const [userProvider, setUserProvider] = useState<DomainLibraryCategory | null>(null);
+    const inferredProvider = inferAssetProviderFromPackId(selectedProviderPackId);
+    const iconSource = userIconSource ?? getInitialSource(selectedProviderPackId, selectedProviderShapeId, customIconUrl);
+    const provider =
         selectedProvider
-        ?? inferAssetProviderFromPackId(selectedProviderPackId)
+        ?? inferredProvider
+        ?? userProvider
         ?? (PROVIDER_OPTIONS[0]?.value as DomainLibraryCategory)
-        ?? 'aws'
-    );
-
-    useEffect(() => {
-        setIconSource(getInitialSource(selectedProviderPackId, selectedProviderShapeId, customIconUrl));
-    }, [selectedProviderPackId, selectedProviderShapeId, customIconUrl]);
-
-    useEffect(() => {
-        if (selectedProvider) {
-            setProvider(selectedProvider);
-            return;
-        }
-        const inferredProvider = inferAssetProviderFromPackId(selectedProviderPackId);
-        if (inferredProvider) {
-            setProvider(inferredProvider);
-        }
-    }, [selectedProvider, selectedProviderPackId]);
+        ?? 'aws';
 
     const filteredIcons = useMemo(() => {
         const term = iconSearch.toLowerCase();
@@ -197,7 +183,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                 columns={3}
                 size="sm"
                 selectedId={iconSource}
-                onSelect={(value) => setIconSource(value as IconSource)}
+                onSelect={(value) => setUserIconSource(value as IconSource)}
                 items={ICON_SOURCE_OPTIONS.map((option) => ({ id: option.id, label: option.label }))}
             />
 
@@ -255,7 +241,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                 <div className="space-y-3">
                     <Select
                         value={provider}
-                        onChange={(value) => setProvider(value as DomainLibraryCategory)}
+                        onChange={(value) => setUserProvider(value as DomainLibraryCategory)}
                         options={PROVIDER_OPTIONS}
                         placeholder="Choose provider"
                     />

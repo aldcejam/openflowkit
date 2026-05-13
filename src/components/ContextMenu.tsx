@@ -138,10 +138,6 @@ export function ContextMenu({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [onClose]);
 
-  useEffect(() => {
-    setMenuPosition(position);
-  }, [position]);
-
   useLayoutEffect(() => {
     const menu = menuRef.current;
     if (!menu) {
@@ -158,8 +154,7 @@ export function ContextMenu({
     if (nextPosition.x !== menuPosition.x || nextPosition.y !== menuPosition.y) {
       setMenuPosition(nextPosition);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [menuPosition.x, menuPosition.y, position.x, position.y, type]);
+  }, [menuPosition.x, menuPosition.y, position, type]);
 
   return (
     <div

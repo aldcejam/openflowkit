@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { FlowNode, FlowEdge, FlowSnapshot } from '@/lib/types';
+import { createId } from '@/lib/id';
 import { loadSnapshots, saveSnapshots } from '@/services/storage/snapshotStorage';
 import {
     SNAPSHOT_KIND_AUTO,
@@ -64,7 +65,7 @@ export const useSnapshots = () => {
 
         const timestamp = new Date(now).toISOString();
         const autoSnapshot: FlowSnapshot = {
-            id: crypto.randomUUID(),
+            id: createId('snapshot'),
             name: buildSnapshotName(SNAPSHOT_KIND_AUTO, timestamp),
             timestamp,
             kind: SNAPSHOT_KIND_AUTO,
@@ -111,7 +112,7 @@ export const useSnapshots = () => {
     const saveSnapshot = useCallback((name: string, nodes: FlowNode[], edges: FlowEdge[]) => {
         const timestamp = new Date().toISOString();
         const newSnapshot: FlowSnapshot = {
-            id: crypto.randomUUID(),
+            id: createId('snapshot'),
             name,
             timestamp,
             kind: SNAPSHOT_KIND_MANUAL,
