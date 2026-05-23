@@ -17,18 +17,10 @@ interface SvgSource {
   previewLoader: () => Promise<string>;
 }
 
-// Eager glob: inline 1600+ icon URLs into a single map at build time instead of
-// emitting one JS chunk per SVG. Keeps Cloudflare Pages uploads under control
-// and dramatically cuts asset count. The `previewLoader` shape is preserved so
-// downstream call sites stay async.
-const svgUrlMap = import.meta.glob('../../../assets/third-party-icons/*/processed/**/*.svg', {
+const svgModules = import.meta.glob('../../../assets/third-party-icons/*/processed/**/*.svg', {
   query: '?url',
   import: 'default',
-  eager: true,
-}) as Record<string, string>;
-const svgModules: Record<string, () => Promise<string>> = Object.fromEntries(
-  Object.entries(svgUrlMap).map(([path, url]) => [path, () => Promise.resolve(url)])
-);
+}) as Record<string, () => Promise<string>>;
 const providerCatalogPromiseCache = new Map<string, Promise<DomainLibraryItem[]>>();
 const shapePreviewCache = new Map<string, ProviderShapePreview>();
 const shapePreviewPromiseCache = new Map<string, Promise<ProviderShapePreview | null>>();
