@@ -11,7 +11,7 @@
 
 <h3>The open-source diagramming studio for builders.</h3>
 
-<p>Create flows from templates, code, structured imports, or AI. Refine them visually, keep them local-first, and export as <b>Cinematic MP4 walkthroughs</b> and via the first <b>MCP server</b> for any OSS diagramming tool.</p>
+<p>Create flows from templates, code, structured imports, or AI. Refine them visually, keep them local-first, and export as <b>Cinematic MP4 walkthroughs</b> — or drive everything from Claude / Cursor / Windsurf via our first-party <b>MCP server</b>.</p>
 
 <br/>
 
@@ -124,7 +124,6 @@ OpenFlowKit is the **only MIT-licensed tool** that combines a real workspace hom
 | AWS / Azure / GCP / CNCF icons        |     ✅      |     ❌     |   ✅    | Partial |     ✅     |
 | Anchored auto-layout (pin nodes)      |     ✅      |     ❌     |   ❌    |   ❌    |     ❌     |
 | Cinematic MP4 export (WebCodecs)      |     ✅      |     ❌     |   ❌    |   ❌    |     ❌     |
-| MCP server (Claude / Cursor agent)    |     ✅      |     ❌     |   ❌    |   ❌    |     ❌     |
 | Figma export (editable SVG)           |     ✅      |     ❌     |   ❌    |   ❌    |     ❌     |
 | No account required                   |     ✅      |     ✅     |   ✅    |   ✅    |     ❌     |
 | Open source (MIT)                     |     ✅      |     ✅     |   ✅    |   ✅    |     ❌     |
@@ -272,7 +271,7 @@ On modern browsers (Chrome / Edge / Safari 16.4+ / Firefox 130+) OpenFlowKit enc
 
 ## 🪄 MCP Server — drive OpenFlowKit from Claude Desktop, Cursor, Windsurf
 
-The **first Model Context Protocol server for any OSS diagramming tool.** Point any MCP client at the [`@openflowkit/mcp-server`](mcp-server/) package and your AI assistant gains provider-free diagramming tools. The client already has an LLM, so OpenFlowKit MCP supplies local validation, codebase analysis, templates, icon lookup, and viewer links instead of asking for another provider key.
+Point any MCP client at the [`@openflowkit/mcp-server`](mcp-server/) package and your AI assistant gains provider-free diagramming tools. The client already has an LLM, so OpenFlowKit MCP supplies local validation, codebase analysis, templates, icon lookup, and viewer links instead of asking for another provider key.
 
 ```json
 {
