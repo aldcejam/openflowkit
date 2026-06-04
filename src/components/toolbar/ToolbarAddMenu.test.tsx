@@ -22,6 +22,7 @@ function createProps() {
     onAddAnnotation: vi.fn(),
     onAddSection: vi.fn(),
     onAddTextNode: vi.fn(),
+    onAddCodeNode: vi.fn(),
     onAddClassNode: vi.fn(),
     onAddEntityNode: vi.fn(),
     onAddMindmapNode: vi.fn(),

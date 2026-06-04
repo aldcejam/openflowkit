@@ -24,6 +24,7 @@ import type { ConnectedEdgePreset } from '@/hooks/edge-operations/utils';
 import type { FlowCanvasReactFlowConfig } from './useFlowCanvasReactFlowConfig';
 import type { AlignmentGuides, SelectionDragPreview } from './alignmentGuides';
 import type { ContextMenuState } from './useFlowCanvasMenus';
+import { useViewSettings } from '@/store/viewHooks';
 
 interface FlowCanvasSurfaceProps {
   containerClassName: string;
@@ -134,6 +135,7 @@ export function FlowCanvasSurface({
   copySelection,
   contextActions,
 }: FlowCanvasSurfaceProps): React.ReactElement {
+  const { presentationMode } = useViewSettings();
   const selectedNodeCount = nodes.filter((node) => node.selected).length;
   const selectedEdgeCount = edges.filter((edge) => edge.selected).length;
   const selectedItemCount = selectedNodeCount + selectedEdgeCount;
@@ -146,7 +148,7 @@ export function FlowCanvasSurface({
       onPasteCapture={onPasteCapture}
       onDoubleClickCapture={onDoubleClickCapture}
     >
-      {selectedItemCount > 1 ? (
+      {selectedItemCount > 1 && !presentationMode ? (
         <div className="pointer-events-none absolute right-5 top-5 z-30">
           <div
             className={`${FLOATING_BADGE_CLASS} px-3 py-1.5 text-[11px] font-semibold text-[var(--brand-text)] backdrop-blur-md animate-in fade-in zoom-in-95 duration-200`}
@@ -163,8 +165,8 @@ export function FlowCanvasSurface({
         {selectionAnnouncement}
       </div>
       <ReactFlow
-        nodes={nodes}
-        edges={edges}
+        nodes={presentationMode ? nodes.map((n) => ({ ...n, selected: false })) : nodes}
+        edges={presentationMode ? edges.map((e) => ({ ...e, selected: false })) : edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
@@ -195,10 +197,15 @@ export function FlowCanvasSurface({
         onlyRenderVisibleElements={reactFlowConfig.onlyRenderVisibleElements}
         connectionMode={reactFlowConfig.connectionMode}
         isValidConnection={reactFlowConfig.isValidConnection}
-        selectionOnDrag={reactFlowConfig.selectionOnDrag}
-        selectNodesOnDrag={reactFlowConfig.selectNodesOnDrag}
+        nodesDraggable={presentationMode ? false : undefined}
+        nodesConnectable={presentationMode ? false : undefined}
+        elementsSelectable={presentationMode ? false : undefined}
+        nodesFocusable={presentationMode ? false : undefined}
+        edgesFocusable={presentationMode ? false : undefined}
+        selectionOnDrag={presentationMode ? false : reactFlowConfig.selectionOnDrag}
+        selectNodesOnDrag={presentationMode ? false : reactFlowConfig.selectNodesOnDrag}
         selectionKeyCode={reactFlowConfig.selectionKeyCode}
-        panOnDrag={reactFlowConfig.panOnDrag}
+        panOnDrag={presentationMode ? true : reactFlowConfig.panOnDrag}
         panActivationKeyCode={reactFlowConfig.panActivationKeyCode}
         selectionMode={reactFlowConfig.selectionMode}
         multiSelectionKeyCode={reactFlowConfig.multiSelectionKeyCode}
@@ -208,7 +215,7 @@ export function FlowCanvasSurface({
         panOnScroll={reactFlowConfig.panOnScroll}
         panOnScrollMode={reactFlowConfig.panOnScrollMode}
         preventScrolling={reactFlowConfig.preventScrolling}
-        zoomOnDoubleClick={reactFlowConfig.zoomOnDoubleClick}
+        zoomOnDoubleClick={presentationMode ? false : reactFlowConfig.zoomOnDoubleClick}
         defaultEdgeOptions={reactFlowConfig.defaultEdgeOptions}
         connectionLineComponent={CustomConnectionLine}
         snapToGrid={snapToGrid}

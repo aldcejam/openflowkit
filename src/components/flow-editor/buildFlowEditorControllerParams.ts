@@ -100,6 +100,7 @@ interface BuildFlowEditorControllerChromeParams {
     handleAddAnnotation: () => void;
     handleAddSection: () => void;
     handleAddTextNode: () => void;
+    handleAddCodeNode: () => void;
     handleAddJourneyNode: () => void;
     handleAddMindmapNode: () => void;
     handleAddArchitectureNode: () => void;

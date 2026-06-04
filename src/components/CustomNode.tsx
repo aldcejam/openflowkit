@@ -3,6 +3,7 @@ import type { LegacyNodeProps } from '@/lib/reactflowCompat';
 import type { NodeData } from '@/lib/types';
 
 import MemoizedMarkdown from './MemoizedMarkdown';
+import { CodeBlock } from './CodeBlock';
 import { resolveNodeVisualStyle } from '../theme';
 import { useDesignSystem } from '../hooks/useDesignSystem';
 import { useInlineNodeTextEdit } from '@/hooks/useInlineNodeTextEdit';
@@ -11,6 +12,7 @@ import { NodeChrome } from './NodeChrome';
 import { NodeTransformControls } from './NodeTransformControls';
 import { useActiveNodeSelection } from './useActiveNodeSelection';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from '@/context/ThemeContext';
 import { useProviderShapePreview } from '@/hooks/useProviderShapePreview';
 import { useShiftHeld } from '@/hooks/useShiftHeld';
 import { NodeShapeSVG } from './NodeShapeSVG';
@@ -81,6 +83,11 @@ function CustomNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
   const designSystem = useDesignSystem();
   const isActiveSelected = useActiveNodeSelection(Boolean(selected));
   const { t } = useTranslation();
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
+
+  const codeLanguage = typeof data.codeLanguage === 'string' && data.codeLanguage ? data.codeLanguage : null;
+  const isCodeNode = Boolean(codeLanguage);
 
   const defaults = getNodeDefaults(type || 'process');
   const activeColor = data.color || defaults.color;
@@ -129,11 +136,13 @@ function CustomNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
     : Math.max(baseMinHeight, contentMinHeight);
   const nodeHeightPx = typeof measuredHeight === 'number' ? measuredHeight : explicitHeightPx;
   const isCompactNode = typeof nodeHeightPx === 'number' && nodeHeightPx < effectiveMinHeight + 8;
-  const contentPadding = isMermaidImportedLeaf
-    ? getMermaidImportedContentPadding(nodeHeightPx)
-    : isCompactNode
-      ? '0.5rem'
-      : designSystem.components.node.padding;
+  const contentPadding = isCodeNode
+    ? '0'
+    : isMermaidImportedLeaf
+      ? getMermaidImportedContentPadding(nodeHeightPx)
+      : isCompactNode
+        ? '0.5rem'
+        : designSystem.components.node.padding;
   const labelEdit = useInlineNodeTextEdit(id, 'label', data.label || '', { multiline: true });
   const subLabelEdit = useInlineNodeTextEdit(id, 'subLabel', data.subLabel || '');
   const connectionHandleClass =
@@ -145,18 +154,23 @@ function CustomNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
     data.assetPresentation === 'icon' &&
     (Boolean(resolvedAssetIconUrl) || Boolean(activeIconKey) || Boolean(data.archIconPackId));
 
-  const labelDisplayValue = hasLabel
-    ? isMermaidImportedLeaf
-      ? <span className="block whitespace-pre-wrap break-words">{data.label}</span>
-      : <MemoizedMarkdown content={data.label} />
-    : showEmptyLabelPrompt
-      ? <span className="text-slate-400/80">{emptyLabelPrompt}</span>
-      : null;
+  const labelDisplayValue = isCodeNode
+    ? <CodeBlock code={data.label || ''} language={codeLanguage!} />
+    : hasLabel
+      ? isMermaidImportedLeaf
+        ? <span className="block whitespace-pre-wrap break-words">{data.label}</span>
+        : <MemoizedMarkdown content={data.label} />
+      : showEmptyLabelPrompt
+        ? <span className="text-slate-400/80">{emptyLabelPrompt}</span>
+        : null;
 
   const needsSquareAspect = NEEDS_SQUARE_ASPECT.has(activeShape);
   const selectionRing =
-    isActiveSelected && !isComplexShape ? `, 0 0 0 2px var(--brand-primary, #e95420)` : '';
+    isActiveSelected && !isComplexShape ? `, 0 0 0 2px var(--brand-primary, #1e3a8a)` : '';
+  const activeBg = isDark && (data.color === 'white' || !data.color) ? 'transparent' : visualStyle.bg;
+  const activeBorder = isDark && (data.color === 'white' || !data.color) ? '#ffffff' : visualStyle.border;
   const animateIn = data.freshlyAdded === true;
+
   const containerStyle: React.CSSProperties = {
     minWidth,
     minHeight: effectiveMinHeight,
@@ -174,8 +188,8 @@ function CustomNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
       activeShape,
       designSystem.components.node.borderRadius
     ),
-    backgroundColor: !isComplexShape ? visualStyle.bg : undefined,
-    borderColor: !isComplexShape ? visualStyle.border : undefined,
+    backgroundColor: isCodeNode ? '#1e1e2e' : (!isComplexShape ? activeBg : undefined),
+    borderColor: isCodeNode ? '#3e4045' : (!isComplexShape ? activeBorder : undefined),
     ...(animateIn
       ? { animation: `nodeAnimateIn 180ms ease-out ${data.animateDelay ?? 0}ms both` }
       : {}),
@@ -207,12 +221,13 @@ function CustomNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
     !data.fontSize && isMermaidImportedLeaf
       ? { fontSize: `${getMermaidImportedFontSize(nodeHeightPx)}px` }
       : {};
+  const defaultTextStyleColor = isDark && (data.color === 'white' || !data.color) ? '#ffffff' : visualStyle.text;
   const textProps = {
     ...fontSizeStyle,
     ...importedFontSizeStyle,
     ...labelFontFamilyStyle,
     ...importedFontFamilyStyle,
-    color: visualStyle.text,
+    color: data.textColor || defaultTextStyleColor,
     fontWeight: data.fontWeight || (isMermaidImportedLeaf ? '500' : '600'),
     fontStyle: data.fontStyle || 'normal',
     lineHeight: isMermaidImportedLeaf ? 1.1 : 1.2,
@@ -220,7 +235,7 @@ function CustomNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
   const subTextProps = {
     ...subLabelFontSizeStyle,
     ...subLabelFontFamilyStyle,
-    color: visualStyle.subText,
+    color: isDark && (data.color === 'white' || !data.color) ? '#a3a3a3' : visualStyle.subText,
     fontWeight: data.subLabelFontWeight || 'normal',
     fontStyle: data.subLabelFontStyle || 'normal',
     textAlign: (data.align || 'center') as React.CSSProperties['textAlign'],
@@ -285,8 +300,8 @@ function CustomNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
               >
                 <NodeShapeSVG
                   shape={activeShape}
-                  fill={visualStyle.bg}
-                  stroke={visualStyle.border}
+                  fill={activeBg}
+                  stroke={activeBorder}
                   strokeWidth={designSystem.components.edge.strokeWidth || '2'}
                 />
               </svg>

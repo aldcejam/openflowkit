@@ -23,6 +23,7 @@ import { resolveLayoutDirection } from '@/components/flow-canvas/pasteHelpers';
 import { buildMermaidDiagnosticsSnapshot } from '@/services/mermaid/diagnosticsSnapshot';
 import { normalizeParseDiagnostics } from '@/services/mermaid/diagnosticFormatting';
 import { useMermaidDiagnosticsActions } from '@/store/selectionHooks';
+import { useVisualSettingsActions } from '@/store/viewHooks';
 
 interface FlowEditorProps {
   onGoHome: () => void;
@@ -34,6 +35,19 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
   const { setNodes, setEdges } = useCanvasActions();
   const { updateTab } = useTabActions();
   const { setMermaidDiagnostics, clearMermaidDiagnostics } = useMermaidDiagnosticsActions();
+  const { setViewSettings } = useVisualSettingsActions();
+
+  React.useEffect(() => {
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement) {
+        setViewSettings({ presentationMode: false });
+      }
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, [setViewSettings]);
   const {
     nodes,
     edges,

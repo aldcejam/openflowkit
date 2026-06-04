@@ -142,6 +142,7 @@ export interface CommandBarPanelProps {
   onAddAnnotation: () => void;
   onAddSection: () => void;
   onAddText: () => void;
+  onAddCode?: () => void;
   onAddJourney?: () => void;
   onAddMindmap?: () => void;
   onAddArchitecture?: () => void;
@@ -321,6 +322,7 @@ export function FlowEditorPanels({
               onAddAnnotation={commandBar.onAddAnnotation}
               onAddSection={commandBar.onAddSection}
               onAddText={commandBar.onAddText}
+              onAddCode={commandBar.onAddCode}
               onAddJourney={commandBar.onAddJourney}
               onAddMindmap={commandBar.onAddMindmap}
               onAddArchitecture={commandBar.onAddArchitecture}

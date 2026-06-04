@@ -77,6 +77,7 @@ const baseProps = {
     onAddAnnotation: vi.fn(),
     onAddSection: vi.fn(),
     onAddText: vi.fn(),
+    onAddCode: vi.fn(),
     onAddImage: vi.fn(),
     onAddBrowserWireframe: vi.fn(),
     onAddMobileWireframe: vi.fn(),

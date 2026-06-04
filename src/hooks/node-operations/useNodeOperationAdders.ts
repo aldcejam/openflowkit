@@ -11,6 +11,7 @@ import {
   createImageNode,
   createSectionNode,
   createTextNode,
+  createCodeNode,
   getDefaultNodePosition,
   getNextSectionOrder,
   getSectionInsertPosition,
@@ -254,6 +255,22 @@ export function useNodeOperationAdders({
     [commitAddedNode, nodesLength, recordHistory, t]
   );
 
+  const handleAddCodeNode = useCallback(
+    (position?: { x: number; y: number }) => {
+      recordHistory();
+      const id = createId('code');
+      commitAddedNode(
+        id,
+        (resolvedPosition) => createCodeNode(
+          id,
+          resolvedPosition || getDefaultNodePosition(nodesLength, 280, 170),
+        ),
+        position
+      );
+    },
+    [commitAddedNode, nodesLength, recordHistory]
+  );
+
   const handleAddImage = useCallback(
     (imageUrl: string, position?: { x: number; y: number }) => {
       recordHistory();
@@ -418,6 +435,7 @@ export function useNodeOperationAdders({
     handleAddEntityNode,
     handleAddSection,
     handleAddTextNode,
+    handleAddCodeNode,
     handleAddImage,
     handleAddWireframe,
     handleAddDomainLibraryItem,

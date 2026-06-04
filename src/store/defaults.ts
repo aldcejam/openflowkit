@@ -72,6 +72,7 @@ export const INITIAL_VIEW_SETTINGS: ViewSettings = {
     exportSerializationMode: 'deterministic',
     language: 'en',
     lintRules: '',
+    presentationMode: false,
 };
 
 export const INITIAL_GLOBAL_EDGE_OPTIONS: GlobalEdgeOptions = {

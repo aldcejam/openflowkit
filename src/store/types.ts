@@ -36,6 +36,7 @@ export interface ViewSettings {
   exportSerializationMode: ExportSerializationMode;
   language: string;
   lintRules: string;
+  presentationMode?: boolean;
 }
 
 export type AIProvider =

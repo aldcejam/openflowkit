@@ -116,6 +116,27 @@ export function createTextNode(
   };
 }
 
+export function createCodeNode(
+  id: string,
+  position: { x: number; y: number },
+): FlowNode {
+  return {
+    id,
+    position,
+    data: {
+      label: '// Write your code here\nconsole.log("Hello World");',
+      subLabel: '',
+      color: 'slate',
+      shape: 'rectangle',
+      codeLanguage: 'javascript',
+      align: 'left',
+    },
+    type: 'custom',
+    style: { width: 280, height: 170 },
+  };
+}
+
+
 export function createImageNode(
   id: string,
   imageUrl: string,

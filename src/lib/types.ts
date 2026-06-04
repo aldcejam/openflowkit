@@ -102,6 +102,7 @@ export interface NodeVisualStyleData {
   backgroundColor?: string;
   transparency?: number; // 0-1
   variant?: string; // wireframe preset key (e.g. 'landing', 'modal')
+  textColor?: string;
 }
 
 export interface NodeCanvasMetadata {

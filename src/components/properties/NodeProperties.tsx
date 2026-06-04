@@ -5,6 +5,7 @@ import { Box, Palette, Star, Image as ImageStart } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { ShapeSelector } from './ShapeSelector';
 import { ColorPicker } from './ColorPicker';
+import { FontColorPicker } from './FontColorPicker';
 import { IconPicker, type ProviderIconSelection } from './IconPicker';
 import { ImageUpload } from './ImageUpload';
 import { CollapsibleSection } from '../ui/CollapsibleSection';
@@ -226,29 +227,46 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
           isOpen={activeSection === 'color'}
           onToggle={() => toggleSection('color')}
         >
-          <ColorPicker
-            selectedColor={selectedNode.data?.color}
-            selectedColorMode={selectedNode.data?.colorMode}
-            selectedCustomColor={selectedNode.data?.customColor}
-            onChange={(color) =>
-              onChange(selectedNode.id, {
-                color,
-                ...(color === 'custom' ? {} : { customColor: undefined }),
-              })
-            }
-            onColorModeChange={
-              supportsColorMode
-                ? (colorMode) => onChange(selectedNode.id, { colorMode })
-                : undefined
-            }
-            onCustomColorChange={
-              supportsCustomColor
-                ? (customColor) => onChange(selectedNode.id, { color: 'custom', customColor })
-                : undefined
-            }
-            allowModes={supportsColorMode}
-            allowCustom={supportsCustomColor}
-          />
+          <div className="space-y-4">
+            <div>
+              <div className="text-[11px] font-medium text-[var(--brand-secondary)] mb-2 uppercase tracking-wider">
+                {t('properties.shapeColor', 'Shape Color')}
+              </div>
+              <ColorPicker
+                selectedColor={selectedNode.data?.color}
+                selectedColorMode={selectedNode.data?.colorMode}
+                selectedCustomColor={selectedNode.data?.customColor}
+                onChange={(color) =>
+                  onChange(selectedNode.id, {
+                    color,
+                    ...(color === 'custom' ? {} : { customColor: undefined }),
+                  })
+                }
+                onColorModeChange={
+                  supportsColorMode
+                    ? (colorMode) => onChange(selectedNode.id, { colorMode })
+                    : undefined
+                }
+                onCustomColorChange={
+                  supportsCustomColor
+                    ? (customColor) => onChange(selectedNode.id, { color: 'custom', customColor })
+                    : undefined
+                }
+                allowModes={supportsColorMode}
+                allowCustom={supportsCustomColor}
+              />
+            </div>
+
+            <div className="border-t border-[var(--color-brand-border)]/40 pt-3">
+              <div className="text-[11px] font-medium text-[var(--brand-secondary)] mb-2 uppercase tracking-wider">
+                {t('properties.fontColor', 'Font Color')}
+              </div>
+              <FontColorPicker
+                selectedColor={selectedNode.data?.textColor as string | undefined}
+                onChange={(textColor) => onChange(selectedNode.id, { textColor })}
+              />
+            </div>
+          </div>
         </CollapsibleSection>
       )}
 

@@ -24,7 +24,7 @@ import { setEdgeInteractionLowDetailMode } from './custom-edge/edgeRenderMode';
 import { useCanvasActions, useCanvasState } from '@/store/canvasHooks';
 import { useSelectionActions } from '@/store/selectionHooks';
 import { useTabActions, useActiveTabId } from '@/store/tabHooks';
-import { useCanvasViewSettings } from '@/store/viewHooks';
+import { useCanvasViewSettings, useViewSettings } from '@/store/viewHooks';
 import { useMermaidDiagnosticsActions } from '@/store/selectionHooks';
 import {
   clearImportLayoutMetadata,
@@ -45,6 +45,7 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
   onCanvasEntityIntent,
 }) => {
   const { t } = useTranslation();
+  const { presentationMode } = useViewSettings();
   const { nodes, edges } = useCanvasState();
   const { onNodesChange, onEdgesChange, setNodes, setEdges } = useCanvasActions();
   const activeTabId = useActiveTabId();
@@ -237,6 +238,7 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
   });
 
   const onCanvasDoubleClickCapture = (event: React.MouseEvent<HTMLDivElement>): void => {
+    if (presentationMode) return;
     if (!isCanvasBackgroundTarget(event.target)) return;
     const position = screenToFlowPosition({ x: event.clientX, y: event.clientY });
     handleAddNode(position);
@@ -408,33 +410,33 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
           y: event.clientY,
         };
       }}
-      onPasteCapture={handleCanvasPaste}
+      onPasteCapture={presentationMode ? undefined : handleCanvasPaste}
       onDoubleClickCapture={onCanvasDoubleClickCapture}
       selectionAnnouncement={selectionAnnouncement}
       nodes={layerAdjustedNodes}
       edges={effectiveEdges}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
-      onReconnect={onReconnect}
-      onSelectionChange={onSelectionChange}
-      onNodeDragStart={handleNodeDragStart}
-      onNodeDrag={handleNodeDrag}
-      onNodeDragStop={handleNodeDragStop}
+      onNodesChange={presentationMode ? undefined : onNodesChange}
+      onEdgesChange={presentationMode ? undefined : onEdgesChange}
+      onConnect={presentationMode ? undefined : onConnect}
+      onReconnect={presentationMode ? undefined : onReconnect}
+      onSelectionChange={presentationMode ? undefined : onSelectionChange}
+      onNodeDragStart={presentationMode ? undefined : handleNodeDragStart}
+      onNodeDrag={presentationMode ? undefined : handleNodeDrag}
+      onNodeDragStop={presentationMode ? undefined : handleNodeDragStop}
       onMoveStart={startInteractionLowDetail}
       onMoveEnd={endInteractionLowDetail}
-      onNodeDoubleClick={onNodeDoubleClick}
-      onNodeClick={onCanvasEntityIntent}
-      onEdgeClick={onCanvasEntityIntent}
-      onNodeContextMenu={onNodeContextMenu}
-      onSelectionContextMenu={onSelectionContextMenu}
-      onPaneContextMenu={onPaneContextMenu}
-      onEdgeContextMenu={onEdgeContextMenu}
-      onPaneClick={onPaneClick}
-      onConnectStart={onConnectStartWrapper}
-      onConnectEnd={onConnectEndWrapper}
-      onDragOver={onDragOver}
-      onDrop={onDrop}
+      onNodeDoubleClick={presentationMode ? undefined : onNodeDoubleClick}
+      onNodeClick={presentationMode ? undefined : onCanvasEntityIntent}
+      onEdgeClick={presentationMode ? undefined : onCanvasEntityIntent}
+      onNodeContextMenu={presentationMode ? undefined : onNodeContextMenu}
+      onSelectionContextMenu={presentationMode ? undefined : onSelectionContextMenu}
+      onPaneContextMenu={presentationMode ? undefined : onPaneContextMenu}
+      onEdgeContextMenu={presentationMode ? undefined : onEdgeContextMenu}
+      onPaneClick={presentationMode ? undefined : onPaneClick}
+      onConnectStart={presentationMode ? undefined : onConnectStartWrapper}
+      onConnectEnd={presentationMode ? undefined : onConnectEndWrapper}
+      onDragOver={presentationMode ? undefined : onDragOver}
+      onDrop={presentationMode ? undefined : onDrop}
       fitView={true}
       reactFlowConfig={reactFlowConfig}
       snapToGrid={snapToGrid}

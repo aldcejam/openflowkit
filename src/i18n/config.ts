@@ -144,8 +144,9 @@ i18n
     missingKeyHandler: (_languages, _namespace, key) => warnMissingTranslationKey(key),
     returnNull: false,
     returnEmptyString: false,
-    parseMissingKeyHandler: (key) => {
+    parseMissingKeyHandler: (key, defaultValue) => {
       warnMissingTranslationKey(key);
+      if (defaultValue) return defaultValue;
       return getTranslationFallback(key);
     },
     interpolation: {

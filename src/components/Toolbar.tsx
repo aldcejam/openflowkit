@@ -33,6 +33,7 @@ interface ToolbarProps {
   onAddAnnotation: (position: { x: number; y: number }) => void;
   onAddSection: (position: { x: number; y: number }) => void;
   onAddTextNode: (position: { x: number; y: number }) => void;
+  onAddCodeNode: (position: { x: number; y: number }) => void;
   onAddClassNode: (position: { x: number; y: number }) => void;
   onAddEntityNode: (position: { x: number; y: number }) => void;
   onAddMindmapNode: (position: { x: number; y: number }) => void;
@@ -61,6 +62,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   onAddAnnotation,
   onAddSection,
   onAddTextNode,
+  onAddCodeNode,
   onAddClassNode,
   onAddEntityNode,
   onAddMindmapNode,
@@ -124,6 +126,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             onAddAnnotation={onAddAnnotation}
             onAddSection={onAddSection}
             onAddTextNode={onAddTextNode}
+            onAddCodeNode={onAddCodeNode}
             onAddClassNode={onAddClassNode}
             onAddEntityNode={onAddEntityNode}
             onAddMindmapNode={onAddMindmapNode}

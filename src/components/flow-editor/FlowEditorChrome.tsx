@@ -8,6 +8,7 @@ import type {
 } from '@/hooks/useFlowEditorCollaboration';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import type { EditorPage } from '@/store/editorPageHooks';
+import { useViewSettings } from '@/store/viewHooks';
 
 const LazyFlowEditorPanels = lazy(async () => {
   const module = await import('@/components/FlowEditorPanels');
@@ -112,6 +113,7 @@ export interface FlowEditorChromeProps {
     onAddAnnotation: (position: { x: number; y: number }) => void;
     onAddSection: (position: { x: number; y: number }) => void;
     onAddTextNode: (position: { x: number; y: number }) => void;
+    onAddCodeNode: (position: { x: number; y: number }) => void;
     onAddClassNode: (position: { x: number; y: number }) => void;
     onAddEntityNode: (position: { x: number; y: number }) => void;
     onAddMindmapNode: (position: { x: number; y: number }) => void;
@@ -159,6 +161,8 @@ export function FlowEditorChrome({
   toolbar,
   emptyState,
 }: FlowEditorChromeProps): React.ReactElement {
+  const { presentationMode } = useViewSettings();
+
   const topNavProps = {
     pages,
     activePageId,
@@ -197,6 +201,7 @@ export function FlowEditorChrome({
     onAddAnnotation: toolbar.onAddAnnotation,
     onAddSection: toolbar.onAddSection,
     onAddTextNode: toolbar.onAddTextNode,
+    onAddCodeNode: toolbar.onAddCodeNode,
     onAddClassNode: toolbar.onAddClassNode,
     onAddEntityNode: toolbar.onAddEntityNode,
     onAddMindmapNode: toolbar.onAddMindmapNode,
@@ -240,18 +245,20 @@ export function FlowEditorChrome({
 
   return (
     <>
-      <Suspense fallback={<TopNavFallback />}>
-        <LazyTopNav {...topNavProps} />
-      </Suspense>
+      {!presentationMode && (
+        <Suspense fallback={<TopNavFallback />}>
+          <LazyTopNav {...topNavProps} />
+        </Suspense>
+      )}
 
-      <div className="flex min-h-0 flex-1 min-w-0 pt-14">
+      <div className={`flex min-h-0 flex-1 min-w-0 ${presentationMode ? 'pt-0' : 'pt-14'}`}>
         <div className="relative min-w-0 flex-1">
           <ErrorBoundary className="h-full">{canvas}</ErrorBoundary>
           <Suspense fallback={null}>
             <LazyDiffModeBanner />
           </Suspense>
         </div>
-        {shouldRenderPanels ? (
+        {shouldRenderPanels && !presentationMode ? (
           <Suspense fallback={null}>
             <LazyFlowEditorPanels {...panels} />
           </Suspense>
@@ -273,14 +280,16 @@ export function FlowEditorChrome({
         </Suspense>
       ) : null}
 
-      {toolbar.isVisible ? (
-        <Suspense fallback={null}>
-          <LazyToolbar {...toolbarProps} />
-        </Suspense>
-      ) : (
-        <Suspense fallback={null}>
-          <LazyPlaybackControls {...playbackProps} />
-        </Suspense>
+      {!presentationMode && (
+        toolbar.isVisible ? (
+          <Suspense fallback={null}>
+            <LazyToolbar {...toolbarProps} />
+          </Suspense>
+        ) : (
+          <Suspense fallback={null}>
+            <LazyPlaybackControls {...playbackProps} />
+          </Suspense>
+        )
       )}
 
       {emptyStateProps ? (

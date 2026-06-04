@@ -24,6 +24,7 @@ export {
   createAnnotationNode,
   createSectionNode,
   createTextNode,
+  createCodeNode,
   createImageNode,
   createClassNode,
   createEntityNode,

@@ -1,9 +1,9 @@
 import React from 'react';
 import { useReactFlow, useViewport } from '@/lib/reactflowCompat';
-import { Plus, Minus, Maximize, HelpCircle } from 'lucide-react';
+import { Plus, Minus, Maximize, HelpCircle, Minimize2 } from 'lucide-react';
 import { Tooltip } from './Tooltip';
 import { useTranslation } from 'react-i18next';
-import { useShortcutHelpActions } from '@/store/viewHooks';
+import { useShortcutHelpActions, useViewSettings, useVisualSettingsActions } from '@/store/viewHooks';
 
 const controlButtonClassName =
   'flex min-h-10 min-w-10 items-center justify-center rounded-[var(--radius-sm)] p-2 text-[var(--brand-secondary)] transition-all hover:bg-[var(--brand-background)] hover:text-[var(--brand-text)] active:scale-95 sm:min-h-9 sm:min-w-9';
@@ -13,6 +13,17 @@ export function NavigationControls(): React.ReactElement {
   const { zoomIn, zoomOut, fitView } = useReactFlow();
   const { zoom } = useViewport();
   const { setShortcutsHelpOpen } = useShortcutHelpActions();
+  const { presentationMode } = useViewSettings();
+  const { setViewSettings } = useVisualSettingsActions();
+
+  const handleExitPresentation = () => {
+    setViewSettings({ presentationMode: false });
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch((err) => {
+        console.error(`Error attempting to exit fullscreen: ${err.message}`);
+      });
+    }
+  };
 
   return (
     <div className="absolute bottom-8 left-4 z-50">
@@ -47,6 +58,17 @@ export function NavigationControls(): React.ReactElement {
             <HelpCircle className="w-4 h-4" />
           </button>
         </Tooltip>
+
+        {presentationMode && (
+          <>
+            <div className="mx-2 my-1 h-px bg-[var(--color-brand-border)]" />
+            <Tooltip text={t('presentation.exit', 'Exit Presentation')} side="right">
+              <button onClick={handleExitPresentation} className={controlButtonClassName}>
+                <Minimize2 className="w-4 h-4" />
+              </button>
+            </Tooltip>
+          </>
+        )}
       </div>
     </div>
   );

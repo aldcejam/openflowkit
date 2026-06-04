@@ -127,12 +127,12 @@ function DiagramViewerInner(): React.ReactElement {
             {viewerSize !== 'badge' ? (
             <div className={`flex shrink-0 items-center justify-between border-b border-[var(--color-brand-border)] bg-[var(--brand-surface)]/90 px-4 backdrop-blur ${viewerSize === 'card' ? 'h-9' : 'h-10'}`}>
                 <div className="flex items-center gap-2">
-                    <OpenFlowLogo className="h-5 w-5 text-[var(--brand-primary,#e95420)]" />
+                    <OpenFlowLogo className="h-5 w-5 text-[var(--brand-primary,#1e3a8a)]" />
                     <span className="text-xs font-semibold text-[var(--brand-secondary)]">{viewerSize === 'card' ? 'OpenFlowKit Viewer' : 'OpenFlowKit'}</span>
                 </div>
                 <button
                     onClick={() => navigate('/home')}
-                    className="flex items-center gap-1.5 rounded-full border border-[var(--color-brand-border)] bg-[var(--brand-surface)] px-3 py-1 text-[11px] font-medium text-[var(--brand-secondary)] shadow-sm transition-all hover:border-[var(--brand-primary,#e95420)] hover:text-[var(--brand-primary,#e95420)] active:scale-95"
+                    className="flex items-center gap-1.5 rounded-full border border-[var(--color-brand-border)] bg-[var(--brand-surface)] px-3 py-1 text-[11px] font-medium text-[var(--brand-secondary)] shadow-sm transition-all hover:border-[var(--brand-primary,#1e3a8a)] hover:text-[var(--brand-primary,#1e3a8a)] active:scale-95"
                 >
                     <ExternalLink className="h-3 w-3" />
                     Open in Editor

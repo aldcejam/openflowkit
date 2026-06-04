@@ -42,6 +42,7 @@ export interface BuildToolbarParams {
   handleAddAnnotation: (position: { x: number; y: number }) => void;
   handleAddSection: (position: { x: number; y: number }) => void;
   handleAddTextNode: (position: { x: number; y: number }) => void;
+  handleAddCodeNode: (position: { x: number; y: number }) => void;
   handleAddClassNode: (position: { x: number; y: number }) => void;
   handleAddEntityNode: (position: { x: number; y: number }) => void;
   handleAddMindmapNode: (position: { x: number; y: number }) => void;

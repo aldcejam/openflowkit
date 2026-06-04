@@ -70,7 +70,8 @@
     "export": "Export",
     "exportDiagram": "Export Diagram",
     "exportAs": "Export As",
-    "rename": "Rename"
+    "rename": "Rename",
+    "present": "Present"
   },
   "nav": {
     "home": "Home",
@@ -95,7 +96,8 @@
     "loadJSON": "Load JSON",
     "playbackMode": "Playback Mode",
     "templates": "Templates",
-    "privacyMessage": "Your diagrams stay with you and do not reach our servers."
+    "privacyMessage": "Your diagrams stay with you and do not reach our servers.",
+    "presentationMode": "Presentation Mode"
   },
   "menu": {
     "file": "File",
@@ -342,6 +344,8 @@
     "title": "Properties",
     "shape": "Shape",
     "color": "Color",
+    "shapeColor": "Shape Color",
+    "fontColor": "Font Color",
     "icon": "Icon",
     "rotation": "Rotation",
     "transparency": "Transparency",
@@ -1315,6 +1319,7 @@
     "stickyNote": "Note",
     "section": "Section",
     "text": "Text",
+    "codeBlock": "Code Block",
     "other": "Other",
     "wireframes": "Wireframes",
     "image": "Image",

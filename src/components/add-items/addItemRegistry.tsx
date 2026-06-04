@@ -2,6 +2,7 @@ import React from 'react';
 import {
   AppWindow,
   Boxes,
+  Code,
   Component,
   GitBranch,
   Image as ImageIcon,
@@ -24,6 +25,7 @@ export type AddItemId =
   | 'circle'
   | 'sticky-note'
   | 'text'
+  | 'code'
   | 'journey'
   | 'mindmap'
   | 'architecture'
@@ -260,6 +262,14 @@ export function getAddItemDefinitions(t: TFunction): AddItemDefinition[] {
       renderIcon: makeLucideIcon(Type),
     },
     {
+      id: 'code',
+      label: t('toolbar.codeBlock', 'Code Block'),
+      section: 'other',
+      keywords: ['code', 'code block', 'monospace', 'programming', 'script'],
+      scope: ['toolbar', 'assets'],
+      renderIcon: makeLucideIcon(Code),
+    },
+    {
       id: 'image',
       label: t('toolbar.image', 'Image'),
       section: 'other',
@@ -289,6 +299,7 @@ export interface AddItemActions {
   onAddAnnotation: (position?: { x: number; y: number }) => void;
   onAddSection: (position?: { x: number; y: number }) => void;
   onAddTextNode: (position?: { x: number; y: number }) => void;
+  onAddCodeNode: (position?: { x: number; y: number }) => void;
   onAddClassNode: (position?: { x: number; y: number }) => void;
   onAddEntityNode: (position?: { x: number; y: number }) => void;
   onAddMindmapNode: (position?: { x: number; y: number }) => void;
@@ -319,6 +330,9 @@ export function executeAddItem(
       return;
     case 'text':
       actions.onAddTextNode(position);
+      return;
+    case 'code':
+      actions.onAddCodeNode(position);
       return;
     case 'journey':
       actions.onAddJourneyNode(position);

@@ -315,6 +315,7 @@ export function useFlowEditorScreenModel({ onGoHome }: UseFlowEditorScreenModelP
       handleAddAnnotation: operations.handleAddAnnotation,
       handleAddSection: operations.handleAddSection,
       handleAddTextNode: operations.handleAddTextNode,
+      handleAddCodeNode: operations.handleAddCodeNode,
       handleAddJourneyNode: operations.handleAddJourneyNode,
       handleAddMindmapNode: operations.handleAddMindmapNode,
       handleAddArchitectureNode: operations.handleAddArchitectureNode,

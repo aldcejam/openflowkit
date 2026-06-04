@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react';
-import { Play, Share2 } from 'lucide-react';
+import { Play, Share2, Presentation } from 'lucide-react';
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/context/ThemeContext';
@@ -7,6 +7,7 @@ import type { CinematicExportRequest } from '@/services/export/cinematicExport';
 import { ExportMenu } from '@/components/ExportMenu';
 import { Tooltip } from '@/components/Tooltip';
 import { Button } from '@/components/ui/Button';
+import { useVisualSettingsActions } from '@/store/viewHooks';
 
 const LazyShareModal = lazy(async () => {
     const module = await import('@/components/ShareModal');
@@ -130,6 +131,15 @@ export function TopNavActions({
     const visibleParticipants = collaboration?.participants.slice(0, visibleViewerCount) ?? [];
     const shareButtonClassName = `ml-1 h-10 w-10 rounded-[var(--radius-md)] sm:h-9 sm:w-9 ${isBeveled ? 'btn-beveled-secondary' : ''}`;
     const playButtonClassName = 'h-10 px-2.5 font-medium sm:h-9 sm:px-3';
+    const { setViewSettings } = useVisualSettingsActions();
+    const handleEnterPresentation = () => {
+        setViewSettings({ presentationMode: true });
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch((err) => {
+                console.error(`Error attempting to enable fullscreen: ${err.message}`);
+            });
+        }
+    };
 
     return (
         <div className="flex min-w-0 items-center justify-end gap-2 sm:gap-3">
@@ -184,6 +194,20 @@ export function TopNavActions({
                         icon={<Play className="h-3.5 w-3.5 sm:mr-1" />}
                     >
                         <span className="hidden sm:inline">{playLabel}</span>
+                    </Button>
+                </Tooltip>
+
+                <Tooltip text={t('nav.presentationMode', 'Presentation Mode')} side="bottom">
+                    <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={handleEnterPresentation}
+                        data-testid="topnav-present"
+                        aria-label="Presentation Mode"
+                        className="h-10 px-2.5 font-medium sm:h-9 sm:px-3"
+                        icon={<Presentation className="h-3.5 w-3.5 sm:mr-1" />}
+                    >
+                        <span className="hidden sm:inline">{t('common.present', 'Present')}</span>
                     </Button>
                 </Tooltip>
 

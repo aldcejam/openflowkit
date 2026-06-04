@@ -111,7 +111,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
                             ? [{
                                 id: 'custom',
                                 label: NODE_COLOR_LABELS.custom,
-                                backgroundColor: '#ffffff',
+                                backgroundColor: selectedColor === 'custom' && selectedCustomColor ? selectedCustomColor : '#ffffff',
                                 accentColor: selectedCustomColor || '#94a3b8',
                                 preview: (
                                     <div className="flex h-6 w-6 items-center justify-center rounded-md border border-dashed border-[var(--color-brand-border)] bg-[var(--brand-background)] text-[var(--brand-secondary)]">
