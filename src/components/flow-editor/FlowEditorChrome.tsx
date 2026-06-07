@@ -9,6 +9,8 @@ import type {
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import type { EditorPage } from '@/store/editorPageHooks';
 import { useViewSettings } from '@/store/viewHooks';
+import { PresentationSidebar } from '@/components/PresentationSidebar';
+import { useSelectionActions } from '@/store/selectionHooks';
 
 const LazyFlowEditorPanels = lazy(async () => {
   const module = await import('@/components/FlowEditorPanels');
@@ -162,6 +164,7 @@ export function FlowEditorChrome({
   emptyState,
 }: FlowEditorChromeProps): React.ReactElement {
   const { presentationMode } = useViewSettings();
+  const { setSelectedNodeId } = useSelectionActions();
 
   const topNavProps = {
     pages,
@@ -262,6 +265,14 @@ export function FlowEditorChrome({
           <Suspense fallback={null}>
             <LazyFlowEditorPanels {...panels} />
           </Suspense>
+        ) : null}
+        {presentationMode && panels.properties.selectedNode?.data?.presentationDetails ? (
+          <div className="h-full border-l border-[var(--color-brand-border)] w-[30vw] max-w-[600px] min-w-[280px]">
+            <PresentationSidebar 
+              selectedNode={panels.properties.selectedNode} 
+              onClose={() => setSelectedNodeId(null)} 
+            />
+          </div>
         ) : null}
       </div>
 

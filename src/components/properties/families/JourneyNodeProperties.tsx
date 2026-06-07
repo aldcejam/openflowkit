@@ -8,6 +8,7 @@ import { CollapsibleSection } from '@/components/ui/CollapsibleSection';
 import { InspectorSectionDivider } from '@/components/properties/InspectorPrimitives';
 import { ColorPicker } from '@/components/properties/ColorPicker';
 import { Footprints, Palette } from 'lucide-react';
+import { NodePresentationSection } from '../NodePresentationSection';
 
 export function JourneyNodeProperties({
   selectedNode,
@@ -65,6 +66,13 @@ export function JourneyNodeProperties({
           allowCustom={true}
         />
       </CollapsibleSection>
+
+      <NodePresentationSection
+        selectedNode={selectedNode}
+        onChange={onChange}
+        isOpen={activeSection === 'presentation'}
+        onToggle={() => setActiveSection((current) => toggleSection(current, 'presentation'))}
+      />
 
       <NodeActionButtons nodeId={selectedNode.id} onDuplicate={onDuplicate} onDelete={onDelete} />
     </>

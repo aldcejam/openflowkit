@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { deflate, inflate } from 'pako';
-import { ReactFlow, Background, Controls, BackgroundVariant, ReactFlowProvider } from '@/lib/reactflowCompat';
+import { ReactFlow, Background, Controls, BackgroundVariant, ReactFlowProvider, useNodesState, useEdgesState } from '@/lib/reactflowCompat';
 import { ExternalLink, AlertTriangle, Loader2 } from 'lucide-react';
 import { parseDslOrThrow } from '@/hooks/ai-generation/graphComposer';
 import { getElkLayout } from '@/services/elkLayout';
 import { flowCanvasNodeTypes, flowCanvasEdgeTypes } from './flow-canvas/flowCanvasTypes';
 import { OpenFlowLogo } from './icons/OpenFlowLogo';
+import { PresentationSidebar } from './PresentationSidebar';
 import type { FlowNode, FlowEdge } from '@/lib/types';
 
 const PAKO_PREFIX = '~';
@@ -72,25 +73,49 @@ function ViewerCanvas({
     edges: FlowEdge[];
     size: ViewerSize;
 }): React.ReactElement {
+    const [flowNodes, setFlowNodes, onNodesChange] = useNodesState(nodes);
+    const [flowEdges, setFlowEdges, onEdgesChange] = useEdgesState(edges);
+
+    useEffect(() => {
+        setFlowNodes(nodes);
+        setFlowEdges(edges);
+    }, [nodes, edges, setFlowNodes, setFlowEdges]);
+
+    const selectedNode = flowNodes.find((n) => n.selected) as FlowNode | undefined;
+    const onSidebarClose = React.useCallback(() => {
+        setFlowNodes((nds) => nds.map((n) => ({ ...n, selected: false })));
+    }, [setFlowNodes]);
+
     return (
-        <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            nodeTypes={flowCanvasNodeTypes}
-            edgeTypes={flowCanvasEdgeTypes}
-            nodesDraggable={false}
-            nodesConnectable={false}
-            elementsSelectable={false}
-            panOnScroll
-            zoomOnScroll={false}
-            zoomOnPinch
-            fitView
-            fitViewOptions={{ padding: size === 'badge' ? 0.08 : size === 'card' ? 0.12 : 0.15 }}
-            className="bg-[var(--brand-background,#f8fafc)]"
-        >
-            <Background variant={BackgroundVariant.Dots} gap={24} size={size === 'badge' ? 1.3 : 1.9} color="color-mix(in srgb, var(--brand-secondary), transparent 80%)" />
-            {size === 'full' ? <Controls showInteractive={false} /> : null}
-        </ReactFlow>
+        <div className="flex h-full w-full">
+            <div className="relative min-w-0 flex-1">
+                <ReactFlow
+                    nodes={flowNodes}
+                    edges={flowEdges}
+                    onNodesChange={onNodesChange}
+                    onEdgesChange={onEdgesChange}
+                    nodeTypes={flowCanvasNodeTypes}
+                    edgeTypes={flowCanvasEdgeTypes}
+                    nodesDraggable={false}
+                    nodesConnectable={false}
+                    elementsSelectable={true}
+                    panOnScroll
+                    zoomOnScroll={false}
+                    zoomOnPinch
+                    fitView
+                    fitViewOptions={{ padding: size === 'badge' ? 0.08 : size === 'card' ? 0.12 : 0.15 }}
+                    className="bg-[var(--brand-background,#f8fafc)]"
+                >
+                    <Background variant={BackgroundVariant.Dots} gap={24} size={size === 'badge' ? 1.3 : 1.9} color="color-mix(in srgb, var(--brand-secondary), transparent 80%)" />
+                    {size === 'full' ? <Controls showInteractive={false} /> : null}
+                </ReactFlow>
+            </div>
+            {selectedNode?.data?.presentationDetails ? (
+                <div className="h-full border-l border-[var(--color-brand-border)]">
+                    <PresentationSidebar selectedNode={selectedNode} onClose={onSidebarClose} />
+                </div>
+            ) : null}
+        </div>
     );
 }
 

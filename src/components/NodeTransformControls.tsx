@@ -2,6 +2,8 @@ import React from 'react';
 import { NodeResizer, useNodeId } from '@/lib/reactflowCompat';
 import { useSelectedNodeId } from '@/store/selectionHooks';
 
+import { useViewSettings } from '@/store/viewHooks';
+
 interface NodeTransformControlsProps {
   isVisible?: boolean;
   minWidth: number;
@@ -17,6 +19,12 @@ export function NodeTransformControls({
 }: NodeTransformControlsProps): React.ReactElement | null {
   const nodeId = useNodeId();
   const selectedNodeId = useSelectedNodeId();
+  const { presentationMode } = useViewSettings();
+  
+  if (presentationMode) {
+    return null;
+  }
+
   const isStoreSelected = Boolean(nodeId) && selectedNodeId === nodeId;
   const shouldShow = Boolean(nodeId) && (isVisible || isStoreSelected);
 

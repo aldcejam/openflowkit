@@ -14,6 +14,7 @@ import { createPropertyInputKeyDownHandler } from '@/components/properties/prope
 import { toggleSection } from '@/components/properties/shared';
 import { SegmentedChoice } from '@/components/properties/SegmentedChoice';
 import { Palette, Type, Workflow } from 'lucide-react';
+import { NodePresentationSection } from '../NodePresentationSection';
 
 function getDepth(selectedNode: DiagramNodePropertiesComponentProps['selectedNode']): number {
   return typeof selectedNode.data.mindmapDepth === 'number' ? selectedNode.data.mindmapDepth : 0;
@@ -158,6 +159,13 @@ export function MindmapNodeProperties({
           ) : null}
         </div>
       </CollapsibleSection>
+
+      <NodePresentationSection
+        selectedNode={selectedNode}
+        onChange={onChange}
+        isOpen={activeSection === 'presentation'}
+        onToggle={() => setActiveSection((current) => toggleSection(current, 'presentation'))}
+      />
 
       <NodeActionButtons nodeId={selectedNode.id} onDuplicate={onDuplicate} onDelete={onDelete} />
     </>

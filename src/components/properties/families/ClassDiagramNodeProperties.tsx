@@ -14,6 +14,7 @@ import {
 } from '@/components/properties/InspectorPrimitives';
 import { createPropertyInputKeyDownHandler } from '@/components/properties/propertyInputBehavior';
 import { Braces, Code, Palette, Type } from 'lucide-react';
+import { NodePresentationSection } from '../NodePresentationSection';
 
 export function ClassDiagramNodeProperties({
   selectedNode,
@@ -106,6 +107,13 @@ export function ClassDiagramNodeProperties({
           Open Mermaid code
         </button>
       </CollapsibleSection>
+
+      <NodePresentationSection
+        selectedNode={selectedNode}
+        onChange={onChange}
+        isOpen={activeSection === 'presentation'}
+        onToggle={() => setActiveSection((current) => toggleSection(current, 'presentation'))}
+      />
 
       <NodeActionButtons nodeId={selectedNode.id} onDuplicate={onDuplicate} onDelete={onDelete} />
     </>

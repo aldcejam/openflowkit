@@ -15,6 +15,7 @@ import { toggleSection } from '@/components/properties/shared';
 import { Palette, ServerCog, Type } from 'lucide-react';
 import { ArchitectureNodeSection } from './ArchitectureNodeSection';
 import { ENVIRONMENT_OPTIONS, RESOURCE_TYPE_OPTIONS } from './architectureOptions';
+import { NodePresentationSection } from '../NodePresentationSection';
 
 export function ArchitectureNodeProperties({
   selectedNode,
@@ -127,6 +128,13 @@ export function ArchitectureNodeProperties({
           </div>
         </div>
       </CollapsibleSection>
+
+      <NodePresentationSection
+        selectedNode={selectedNode}
+        onChange={onChange}
+        isOpen={activeSection === 'presentation'}
+        onToggle={() => setActiveSection((current) => toggleSection(current, 'presentation'))}
+      />
 
       <NodeActionButtons nodeId={selectedNode.id} onDuplicate={onDuplicate} onDelete={onDelete} />
     </>

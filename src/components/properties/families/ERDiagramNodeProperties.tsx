@@ -14,6 +14,7 @@ import {
 } from '@/components/properties/InspectorPrimitives';
 import { createPropertyInputKeyDownHandler } from '@/components/properties/propertyInputBehavior';
 import { Code, Palette, Table, Type } from 'lucide-react';
+import { NodePresentationSection } from '../NodePresentationSection';
 
 export function ERDiagramNodeProperties({
   selectedNode,
@@ -122,6 +123,13 @@ export function ERDiagramNodeProperties({
           </button>
         </div>
       </CollapsibleSection>
+
+      <NodePresentationSection
+        selectedNode={selectedNode}
+        onChange={onChange}
+        isOpen={activeSection === 'presentation'}
+        onToggle={() => setActiveSection((current) => toggleSection(current, 'presentation'))}
+      />
 
       <NodeActionButtons nodeId={selectedNode.id} onDuplicate={onDuplicate} onDelete={onDelete} />
     </>

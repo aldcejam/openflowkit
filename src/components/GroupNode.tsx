@@ -12,6 +12,7 @@ import {
 import { NodeTransformControls } from './NodeTransformControls';
 import { useActiveNodeSelection } from './useActiveNodeSelection';
 import { resolveSectionVisualStyle } from '@/theme';
+import { useViewSettings } from '@/store/viewHooks';
 
 const GROUP_HANDLE_CONFIG: Array<{
   id: string;
@@ -28,6 +29,7 @@ function GroupNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.Rea
   const [collapsed, setCollapsed] = useState(false);
   const { setNodes } = useReactFlow();
   const allNodes = useNodes();
+  const { presentationMode } = useViewSettings();
   const isActiveSelected = useActiveNodeSelection(Boolean(selected));
   const visualStyle = resolveSectionVisualStyle(data.color, data.colorMode, data.customColor, 'violet');
   const handlePointerEvents = getHandlePointerEvents(true, isActiveSelected);
@@ -129,7 +131,7 @@ function GroupNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.Rea
       </div>
 
       {/* Handles for group connections */}
-      {GROUP_HANDLE_CONFIG.map(({ id: handleId, position, side }) => (
+      {!presentationMode && GROUP_HANDLE_CONFIG.map(({ id: handleId, position, side }) => (
         <Handle
           key={handleId}
           type="source"

@@ -209,6 +209,10 @@ export interface MermaidSvgNodeData {
   linkedEditableGraphId?: string;
 }
 
+export interface PresentationNodeData {
+  presentationDetails?: string;
+}
+
 export interface NodeData
   extends
     NodeLabelData,
@@ -222,7 +226,8 @@ export interface NodeData
     ArchitectureNodeData,
     SequenceNodeData,
     SectionNodeData,
-    MermaidSvgNodeData {
+    MermaidSvgNodeData,
+    PresentationNodeData {
   [key: string]: unknown;
 }
 

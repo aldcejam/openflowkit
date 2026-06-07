@@ -5,6 +5,7 @@ import {
   getHandlePointerEvents,
   getV2HandleVisibilityClass,
 } from './handleInteraction';
+import { useViewSettings } from '@/store/viewHooks';
 import { useCinematicExportState } from '@/context/CinematicExportContext';
 import { NodeTransformControls } from './NodeTransformControls';
 import { useActiveNodeSelection } from './useActiveNodeSelection';
@@ -111,6 +112,8 @@ export const NodeChrome = memo(function NodeChrome({
     progress: activeNodeProgress,
   });
 
+  const { presentationMode } = useViewSettings();
+
   return (
     <div
       className="group relative h-full w-full"
@@ -127,11 +130,11 @@ export const NodeChrome = memo(function NodeChrome({
         minHeight={minHeight}
         keepAspectRatio={keepAspectRatio}
       />
-      {nodeId && showQuickCreateButtons ? (
+      {nodeId && showQuickCreateButtons && !presentationMode ? (
         <NodeQuickCreateButtons nodeId={nodeId} visible={selected} />
       ) : null}
       {children}
-      {handles.map(({ id, position, side }) => (
+      {!presentationMode && handles.map(({ id, position, side }) => (
         <Handle
           key={id}
           type="source"

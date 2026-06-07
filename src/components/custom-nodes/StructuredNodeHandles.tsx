@@ -5,6 +5,7 @@ import {
   getHandlePointerEvents,
   getV2HandleVisibilityClass,
 } from '@/components/handleInteraction';
+import { useViewSettings } from '@/store/viewHooks';
 
 interface StructuredNodeHandlesProps {
   isActiveSelected: boolean;
@@ -19,7 +20,13 @@ const HANDLE_POSITIONS = [
 
 export function StructuredNodeHandles({
   isActiveSelected,
-}: StructuredNodeHandlesProps): React.ReactElement {
+}: StructuredNodeHandlesProps): React.ReactElement | null {
+  const { presentationMode } = useViewSettings();
+  
+  if (presentationMode) {
+    return null;
+  }
+
   const handlePointerEvents = getHandlePointerEvents(true, isActiveSelected);
   const handleVisibilityClass = getV2HandleVisibilityClass(isActiveSelected);
 

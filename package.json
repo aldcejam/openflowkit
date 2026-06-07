@@ -50,6 +50,9 @@
     "prepare": "node -e \"if (process.env.CI) process.exit(0)\" && husky || true"
   },
   "dependencies": {
+    "@blocknote/core": "^0.51.4",
+    "@blocknote/mantine": "^0.51.4",
+    "@blocknote/react": "^0.51.4",
     "@google/genai": "^1.40.0",
     "@mermaid-js/layout-elk": "^0.2.1",
     "@xyflow/react": "^12.10.1",

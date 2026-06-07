@@ -14,6 +14,7 @@ import { NodeActionButtons } from './NodeActionButtons';
 import { NodeContentSection } from './NodeContentSection';
 import { NodeImageSettingsSection } from './NodeImageSettingsSection';
 import { NodeWireframeVariantSection } from './NodeWireframeVariantSection';
+import { NodePresentationSection } from './NodePresentationSection';
 import { InspectorSectionDivider } from './InspectorPrimitives';
 import type { DomainLibraryCategory } from '@/services/domainLibrary';
 import { getAssetCategoryDisplayName } from '@/services/assetPresentation';
@@ -314,6 +315,13 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
           />
         </CollapsibleSection>
       )}
+
+      <NodePresentationSection
+        selectedNode={selectedNode}
+        onChange={onChange}
+        isOpen={activeSection === 'presentation'}
+        onToggle={() => toggleSection('presentation')}
+      />
 
       <NodeActionButtons
         nodeId={selectedNode.id}

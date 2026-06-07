@@ -165,8 +165,8 @@ export function FlowCanvasSurface({
         {selectionAnnouncement}
       </div>
       <ReactFlow
-        nodes={presentationMode ? nodes.map((n) => ({ ...n, selected: false })) : nodes}
-        edges={presentationMode ? edges.map((e) => ({ ...e, selected: false })) : edges}
+        nodes={nodes}
+        edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
@@ -199,9 +199,9 @@ export function FlowCanvasSurface({
         isValidConnection={reactFlowConfig.isValidConnection}
         nodesDraggable={presentationMode ? false : undefined}
         nodesConnectable={presentationMode ? false : undefined}
-        elementsSelectable={presentationMode ? false : undefined}
-        nodesFocusable={presentationMode ? false : undefined}
-        edgesFocusable={presentationMode ? false : undefined}
+        elementsSelectable={undefined}
+        nodesFocusable={undefined}
+        edgesFocusable={undefined}
         selectionOnDrag={presentationMode ? false : reactFlowConfig.selectionOnDrag}
         selectNodesOnDrag={presentationMode ? false : reactFlowConfig.selectNodesOnDrag}
         selectionKeyCode={reactFlowConfig.selectionKeyCode}
