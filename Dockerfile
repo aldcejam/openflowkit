@@ -16,7 +16,7 @@ COPY docs-site/package.json ./docs-site/package.json
 ENV CI=1
 
 RUN --mount=type=cache,id=npm-cache,target=/root/.npm \
-    npm ci --no-audit --no-fund
+    npm install --no-audit --no-fund
 
 COPY . .
 

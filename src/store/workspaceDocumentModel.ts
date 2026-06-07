@@ -146,8 +146,12 @@ export function mergeActivePagesIntoDocuments(params: {
             return document;
         }
 
+        const isSinglePageDocument = document.pages.length === 1 && syncedPages.length === 1;
+        const newName = isSinglePageDocument ? syncedPages[0].name : document.name;
+
         return {
             ...document,
+            name: newName,
             activePageId,
             pages: syncedPages.map((page) => ({
                 id: page.id,

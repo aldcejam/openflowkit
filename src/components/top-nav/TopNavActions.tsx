@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react';
-import { Play, Share2, Presentation } from 'lucide-react';
+import { Play, Share2, Presentation, Save, RefreshCw } from 'lucide-react';
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/context/ThemeContext';
@@ -8,6 +8,8 @@ import { ExportMenu } from '@/components/ExportMenu';
 import { Tooltip } from '@/components/Tooltip';
 import { Button } from '@/components/ui/Button';
 import { useVisualSettingsActions } from '@/store/viewHooks';
+import { persistToFileSystem, forceSyncFromServer } from '@/services/storage/localFirstRuntime';
+import { useToast } from '@/components/ui/ToastContext';
 
 const LazyShareModal = lazy(async () => {
     const module = await import('@/components/ShareModal');
@@ -124,6 +126,7 @@ export function TopNavActions({
 }: TopNavActionsProps): React.ReactElement {
     const { t } = useTranslation();
     const { resolvedTheme } = useTheme();
+    const { addToast } = useToast();
     const playLabel = t('common.play', 'Preview');
     const [isShareModalOpen, setIsShareModalOpen] = React.useState(false);
     const viewerCount = collaboration?.viewerCount ?? 1;
@@ -182,6 +185,40 @@ export function TopNavActions({
                         </Tooltip>
                     </div>
                 )}
+
+                <Tooltip text={t('nav.reload', 'Reload from server')} side="bottom">
+                    <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={async () => {
+                            await forceSyncFromServer();
+                            addToast(t('nav.reloadSuccess', 'Reloaded from server!'), 'success');
+                        }}
+                        data-testid="topnav-reload"
+                        aria-label={t('nav.reload', 'Reload')}
+                        className="h-10 px-2.5 font-medium sm:h-9 sm:px-3"
+                        icon={<RefreshCw className="h-3.5 w-3.5 sm:mr-1" />}
+                    >
+                        <span className="hidden sm:inline">{t('nav.reload', 'Reload')}</span>
+                    </Button>
+                </Tooltip>
+
+                <Tooltip text={t('nav.save', 'Save')} side="bottom">
+                    <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => {
+                            persistToFileSystem();
+                            addToast(t('nav.saveSuccess', 'Saved successfully!'), 'success');
+                        }}
+                        data-testid="topnav-save"
+                        aria-label={t('common.save', 'Save')}
+                        className="h-10 px-2.5 font-medium sm:h-9 sm:px-3"
+                        icon={<Save className="h-3.5 w-3.5 sm:mr-1" />}
+                    >
+                        <span className="hidden sm:inline">{t('common.save', 'Save')}</span>
+                    </Button>
+                </Tooltip>
 
                 <Tooltip text={t('nav.playbackMode', 'Preview playback')} side="bottom">
                     <Button

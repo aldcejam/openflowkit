@@ -7,7 +7,7 @@ import { syncWorkspaceDocuments } from '@/store/documentStateSync';
 import { getEditorPagesForDocument } from '@/store/workspaceDocumentModel';
 import type { FlowStoreState } from '@/store';
 import { useFlowStore } from '@/store';
-import { createPersistedDocumentsFromTabs } from './persistedDocumentAdapters';
+import { createPersistedDocumentsFromTabs, createPersistedDocumentsFromFlowDocuments } from './persistedDocumentAdapters';
 import {
   createLoadedFlowWorkspace,
   localFirstRepository,
@@ -104,16 +104,52 @@ async function migrateLegacyStoreIntoRepositoryIfNeeded(): Promise<void> {
 }
 
 async function hydrateStoreFromRepository(): Promise<void> {
-  const loaded = await localFirstRepository.loadWorkspaceSnapshot();
+  let loaded = await localFirstRepository.loadWorkspaceSnapshot();
+  
+  try {
+    const keyToLoad = 'workspace';
+    const res = await fetch(`/api/load?key=${keyToLoad}`);
+    const json = await res.json();
+    if (json.success && json.data) {
+      let apiDocuments: typeof loaded.documents | null = null;
+      let apiActiveDocumentId: string | null = null;
+
+      if (Array.isArray(json.data)) {
+        // Fallback for older simple array format
+        apiDocuments = json.data;
+      } else if (json.data.documents && Array.isArray(json.data.documents)) {
+        // New structure containing both documents and activeDocumentId
+        apiDocuments = json.data.documents;
+        apiActiveDocumentId = json.data.activeDocumentId || null;
+      }
+
+      if (apiDocuments && apiDocuments.length > 0) {
+        const resolvedActiveId = apiActiveDocumentId || loaded.workspaceMeta.activeDocumentId || apiDocuments[0]?.id || null;
+        const activeDoc = apiDocuments.find((d: { id: string }) => d.id === resolvedActiveId) || apiDocuments[0] || null;
+
+        loaded = {
+          document: activeDoc,
+          documents: apiDocuments,
+          workspaceMeta: {
+            ...loaded.workspaceMeta,
+            activeDocumentId: resolvedActiveId,
+            documentOrder: apiDocuments.map((d: { id: string }) => d.id),
+          }
+        };
+
+        // Proactively save to local IndexedDB to keep the local repository in sync
+        await localFirstRepository.saveDocuments(
+          loaded.documents,
+          loaded.workspaceMeta.activeDocumentId
+        );
+      }
+    }
+  } catch (err) {
+    console.warn('Failed to load from file system backend, using local storage fallback.', err);
+  }
+
   const workspace = createLoadedFlowWorkspace(loaded);
   const activeDocument = getEditorPagesForDocument(workspace.documents, workspace.activeDocumentId);
-  if (!activeDocument) {
-    captureAnalyticsEvent('workspace_restored', {
-      document_count: 0,
-      has_active_document: false,
-    });
-    return;
-  }
 
   const persistentAiSettings = await localFirstRepository.loadPersistentAISettings();
   const parsedPersistentAiSettings = parsePersistentAISettingsJson(
@@ -126,17 +162,17 @@ async function hydrateStoreFromRepository(): Promise<void> {
   useFlowStore.setState((currentState) => ({
     ...currentState,
     documents: workspace.documents,
-    activeDocumentId: activeDocument.activeDocumentId,
-    tabs: activeDocument.pages,
-    activeTabId: activeDocument.activePageId,
-    nodes: activeDocument.pages.find((page) => page.id === activeDocument.activePageId)?.nodes ?? [],
-    edges: activeDocument.pages.find((page) => page.id === activeDocument.activePageId)?.edges ?? [],
+    activeDocumentId: activeDocument?.activeDocumentId ?? workspace.activeDocumentId ?? '',
+    tabs: activeDocument?.pages ?? [],
+    activeTabId: activeDocument?.activePageId ?? '',
+    nodes: activeDocument ? (activeDocument.pages.find((page) => page.id === activeDocument.activePageId)?.nodes ?? []) : [],
+    edges: activeDocument ? (activeDocument.pages.find((page) => page.id === activeDocument.activePageId)?.edges ?? []) : [],
     aiSettings,
   }));
 
   captureAnalyticsEvent('workspace_restored', {
     document_count: workspace.documents.length,
-    has_active_document: Boolean(activeDocument.activeDocumentId),
+    has_active_document: Boolean(activeDocument),
   });
 }
 
@@ -161,6 +197,78 @@ function persistStoreSnapshot(): void {
   }
 }
 
+export async function forceSyncFromServer(): Promise<void> {
+  try {
+    const res = await fetch(`/api/load?key=workspace`);
+    const json = await res.json();
+    if (json.success && json.data && Array.isArray(json.data.documents)) {
+      const apiDocs = json.data.documents;
+      if (apiDocs.length > 0) {
+        let resolvedActiveId = json.data.activeDocumentId;
+        const activeDoc = apiDocs.find((d: { id: string }) => d.id === resolvedActiveId) ?? apiDocs[0] ?? null;
+        if (activeDoc) {
+          resolvedActiveId = activeDoc.id;
+        }
+
+        const loaded = {
+          document: activeDoc,
+          documents: apiDocs,
+          workspaceMeta: {
+            id: 'workspace' as const,
+            activeDocumentId: resolvedActiveId,
+            documentOrder: apiDocs.map((d: { id: string }) => d.id),
+            lastOpenedAt: new Date().toISOString()
+          }
+        };
+
+        const workspace = createLoadedFlowWorkspace(loaded);
+        
+        useFlowStore.setState((currentState) => ({
+          ...currentState,
+          documents: workspace.documents,
+          activeDocumentId: workspace.activeDocumentId,
+        }));
+        
+        console.log('[forceSyncFromServer] Synced', workspace.documents.length, 'documents from server');
+      }
+    }
+  } catch (err) {
+    console.error('Failed to force sync', err);
+  }
+}
+
+export function persistToFileSystem(): void {
+  const nextState = useFlowStore.getState();
+  const documents = syncWorkspaceDocuments({
+    documents: nextState.documents,
+    activeDocumentId: nextState.activeDocumentId,
+    tabs: nextState.tabs.map(sanitizePersistedTab),
+    activeTabId: nextState.activeTabId,
+    nodes: nextState.nodes,
+    edges: nextState.edges,
+  });
+
+  const persistedDocuments = createPersistedDocumentsFromFlowDocuments(documents);
+
+  const key = 'workspace';
+  const payload = {
+    documents: persistedDocuments,
+    activeDocumentId: nextState.activeDocumentId,
+  };
+
+  console.log('[persistToFileSystem] Sending payload with', persistedDocuments.length, 'documents');
+  console.log('[persistToFileSystem] Document names:', persistedDocuments.map(d => d.name));
+
+  fetch('/api/save', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key, data: payload }),
+    keepalive: true,
+  }).catch((err) => {
+    console.error('Failed to save to file system', err);
+  });
+}
+
 let syncStopper: (() => void) | null = null;
 let initializationPromise: Promise<void> | null = null;
 
@@ -173,7 +281,16 @@ export async function initializeLocalFirstPersistence(): Promise<void> {
     return;
   }
 
+  let hasPendingChanges = false;
   let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+  let fileSystemTimer: ReturnType<typeof setTimeout> | null = null;
+
+  window.addEventListener('beforeunload', () => {
+    if (hasPendingChanges) {
+      persistToFileSystem();
+    }
+  });
+
   syncStopper = useFlowStore.subscribe((state, previousState) => {
     const documentsChanged = state.documents !== previousState.documents;
     const tabsChanged = state.tabs !== previousState.tabs;
@@ -185,13 +302,24 @@ export async function initializeLocalFirstPersistence(): Promise<void> {
       return;
     }
 
+    hasPendingChanges = true;
+
     if (debounceTimer) {
       clearTimeout(debounceTimer);
+    }
+    if (fileSystemTimer) {
+      clearTimeout(fileSystemTimer);
     }
 
     debounceTimer = setTimeout(() => {
       persistStoreSnapshot();
     }, STORE_SUBSCRIPTION_DEBOUNCE_MS);
+
+    fileSystemTimer = setTimeout(() => {
+      persistToFileSystem();
+      hasPendingChanges = false;
+      fileSystemTimer = null;
+    }, 3000);
   });
 }
 

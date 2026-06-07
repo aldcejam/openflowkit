@@ -87,15 +87,39 @@ export function HomeDashboard({
             {t('home.description', 'Manage your flows and diagrams.')}
           </p>
         </div>
-        <Button
-          onClick={handleCreateNew}
-          data-testid="home-create-new-header"
-          variant="primary"
-          size="sm"
-        >
-          <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
-          {t('home.createNew', 'Create new')}
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            onClick={async () => {
+              const { persistToFileSystem } = await import('@/services/storage/localFirstRuntime');
+              persistToFileSystem();
+            }}
+            data-testid="home-save-header"
+            variant="secondary"
+            size="sm"
+          >
+            {t('common.save', 'Save')}
+          </Button>
+          <Button
+            onClick={async () => {
+              const { forceSyncFromServer } = await import('@/services/storage/localFirstRuntime');
+              await forceSyncFromServer();
+            }}
+            data-testid="home-sync-header"
+            variant="secondary"
+            size="sm"
+          >
+            {t('home.sync', 'Sync from server')}
+          </Button>
+          <Button
+            onClick={handleCreateNew}
+            data-testid="home-create-new-header"
+            variant="primary"
+            size="sm"
+          >
+            <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
+            {t('home.createNew', 'Create new')}
+          </Button>
+        </div>
       </div>
 
       <section>
