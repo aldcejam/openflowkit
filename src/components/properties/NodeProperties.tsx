@@ -229,36 +229,38 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
           onToggle={() => toggleSection('color')}
         >
           <div className="space-y-4">
-            <div>
-              <div className="text-[11px] font-medium text-[var(--brand-secondary)] mb-2 uppercase tracking-wider">
-                {t('properties.shapeColor', 'Shape Color')}
+            {!isText && (
+              <div>
+                <div className="text-[11px] font-medium text-[var(--brand-secondary)] mb-2 uppercase tracking-wider">
+                  {t('properties.shapeColor', 'Shape Color')}
+                </div>
+                <ColorPicker
+                  selectedColor={selectedNode.data?.color}
+                  selectedColorMode={selectedNode.data?.colorMode}
+                  selectedCustomColor={selectedNode.data?.customColor}
+                  onChange={(color) =>
+                    onChange(selectedNode.id, {
+                      color,
+                      ...(color === 'custom' ? {} : { customColor: undefined }),
+                    })
+                  }
+                  onColorModeChange={
+                    supportsColorMode
+                      ? (colorMode) => onChange(selectedNode.id, { colorMode })
+                      : undefined
+                  }
+                  onCustomColorChange={
+                    supportsCustomColor
+                      ? (customColor) => onChange(selectedNode.id, { color: 'custom', customColor })
+                      : undefined
+                  }
+                  allowModes={supportsColorMode}
+                  allowCustom={supportsCustomColor}
+                />
               </div>
-              <ColorPicker
-                selectedColor={selectedNode.data?.color}
-                selectedColorMode={selectedNode.data?.colorMode}
-                selectedCustomColor={selectedNode.data?.customColor}
-                onChange={(color) =>
-                  onChange(selectedNode.id, {
-                    color,
-                    ...(color === 'custom' ? {} : { customColor: undefined }),
-                  })
-                }
-                onColorModeChange={
-                  supportsColorMode
-                    ? (colorMode) => onChange(selectedNode.id, { colorMode })
-                    : undefined
-                }
-                onCustomColorChange={
-                  supportsCustomColor
-                    ? (customColor) => onChange(selectedNode.id, { color: 'custom', customColor })
-                    : undefined
-                }
-                allowModes={supportsColorMode}
-                allowCustom={supportsCustomColor}
-              />
-            </div>
+            )}
 
-            <div className="border-t border-[var(--color-brand-border)]/40 pt-3">
+            <div className={!isText ? "border-t border-[var(--color-brand-border)]/40 pt-3" : ""}>
               <div className="text-[11px] font-medium text-[var(--brand-secondary)] mb-2 uppercase tracking-wider">
                 {t('properties.fontColor', 'Font Color')}
               </div>

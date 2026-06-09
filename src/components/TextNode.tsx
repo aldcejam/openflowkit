@@ -119,7 +119,7 @@ function TextNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
           className={`prose prose-sm max-w-full w-full text-center leading-snug font-medium break-words ${fontSizeClass} ${fontFamilyClass}`}
           style={{
             fontSize: `${effectiveFontSizePx}px`,
-            color: textVisualStyle.text,
+            color: data.textColor || 'var(--brand-text-primary)',
           }}
           inputClassName="text-center"
           inputStyle={{ fontSize: `${effectiveFontSizePx}px` }}
