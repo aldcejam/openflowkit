@@ -13,9 +13,10 @@ import {
 } from './architectureSemantics';
 
 const LINE_STYLE_OPTIONS = [
-    { id: 'default', label: 'Bezier' },
-    { id: 'smoothstep', label: 'Smoothstep' },
-    { id: 'step', label: 'Step' },
+    { id: 'straight', label: 'Straight' },
+    { id: 'default', label: 'Curved' },
+    { id: 'step', label: 'Orthogonal' },
+    { id: 'smoothstep', label: 'Rounded' },
 ];
 
 interface EdgeStyleSectionProps {
@@ -41,7 +42,7 @@ export function EdgeStyleSection({ selectedEdge, onChange }: EdgeStyleSectionPro
                 items={LINE_STYLE_OPTIONS}
                 selectedId={selectedEdge.type || 'default'}
                 onSelect={(edgeType) => onChange(selectedEdge.id, { type: edgeType })}
-                columns={3}
+                columns={4}
             />
 
             <button

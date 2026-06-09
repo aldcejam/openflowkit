@@ -13,6 +13,7 @@ import {
     getPathMidpoint,
     getSelfLoopPath,
     withBundledLabelOffset,
+    buildOrthogonalWaypoints,
 } from './pathUtilsGeometry';
 import {
     getEndpointFanoutOffset,
@@ -272,11 +273,19 @@ export function buildEdgePath(
         if (manualWaypoints.length > 0) {
             const pathPoints = [{ x: sourceX, y: sourceY }, ...manualWaypoints, { x: targetX, y: targetY }];
             const midpoint = getPathMidpoint(pathPoints);
-            const smoothedManual = (!effectiveForceOrthogonal && isSmoothCurve(resolvedCurve))
-                ? buildCurvedPath(pathPoints, resolvedCurve)
-                : null;
+            let pathStr: string;
+            
+            if (!effectiveForceOrthogonal && isSmoothCurve(resolvedCurve)) {
+                pathStr = buildCurvedPath(pathPoints, resolvedCurve) ?? buildRoundedPolylinePath(pathPoints, 20);
+            } else if (resolvedCurve === 'step' || resolvedCurve === 'smoothstep' || effectiveForceOrthogonal) {
+                const orthoPoints = buildOrthogonalWaypoints(pathPoints, params.sourcePosition, params.targetPosition);
+                pathStr = buildRoundedPolylinePath(orthoPoints, resolvedCurve === 'smoothstep' ? 20 : 0);
+            } else {
+                pathStr = buildRoundedPolylinePath(pathPoints, 0);
+            }
+
             return withBundledLabelOffset(
-                smoothedManual ?? buildRoundedPolylinePath(pathPoints, 20),
+                pathStr,
                 midpoint.x,
                 midpoint.y,
                 params,

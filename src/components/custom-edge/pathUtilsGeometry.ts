@@ -251,6 +251,50 @@ export function buildMindmapRootBranchPath(
   };
 }
 
+export function buildOrthogonalWaypoints(
+  points: { x: number; y: number }[],
+  sourcePosition: Position = Position.Right,
+  targetPosition: Position = Position.Left
+): { x: number; y: number }[] {
+  if (points.length < 2) return points;
+  const ortho: { x: number; y: number }[] = [points[0]];
+  for (let index = 1; index < points.length; index += 1) {
+    const prev = ortho[ortho.length - 1];
+    const curr = points[index];
+
+    if (Math.abs(curr.x - prev.x) < 1 || Math.abs(curr.y - prev.y) < 1) {
+      ortho.push(curr);
+      continue;
+    }
+
+    let horizontalFirst = Math.abs(curr.x - prev.x) > Math.abs(curr.y - prev.y);
+
+    if (index === 1) {
+      if (sourcePosition === Position.Left || sourcePosition === Position.Right) {
+        horizontalFirst = true;
+      } else if (sourcePosition === Position.Top || sourcePosition === Position.Bottom) {
+        horizontalFirst = false;
+      }
+    }
+
+    if (index === points.length - 1) {
+      if (targetPosition === Position.Left || targetPosition === Position.Right) {
+        horizontalFirst = false;
+      } else if (targetPosition === Position.Top || targetPosition === Position.Bottom) {
+        horizontalFirst = true;
+      }
+    }
+
+    if (horizontalFirst) {
+      ortho.push({ x: curr.x, y: prev.y });
+    } else {
+      ortho.push({ x: prev.x, y: curr.y });
+    }
+    ortho.push(curr);
+  }
+  return normalizePolylinePoints(ortho);
+}
+
 export function buildMindmapTopicBranchPath(
   sourceX: number,
   sourceY: number,

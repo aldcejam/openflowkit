@@ -17,6 +17,7 @@ import {
 import type { CinematicRenderState } from '@/services/export/cinematicRenderState';
 import { EdgeMarkerDefs } from './EdgeMarkerDefs';
 import { resolveEdgeVisualStyle } from '@/theme';
+import { EdgeRoutingHandles } from './EdgeRoutingHandles';
 
 interface CustomEdgeWrapperProps {
   id: string;
@@ -387,6 +388,17 @@ export const CustomEdgeWrapper = memo(function CustomEdgeWrapper({
         >
           <title>Select edge</title>
         </path>
+      ) : null}
+      {shouldRenderInteractiveChrome && selected ? (
+        <EdgeRoutingHandles
+          edgeId={id}
+          sourceX={_sourceX}
+          sourceY={_sourceY}
+          targetX={_targetX}
+          targetY={_targetY}
+          data={data}
+          color={resolvedStyle.stroke as string}
+        />
       ) : null}
       <path
         ref={pathRef}
