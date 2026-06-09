@@ -10,6 +10,7 @@ interface TopNavMenuPanelProps {
     onOpenSettings: () => void;
     onHistory: () => void;
     onImportJSON: () => void;
+    children?: React.ReactNode;
 }
 
 export function TopNavMenuPanel({
@@ -18,6 +19,7 @@ export function TopNavMenuPanel({
     onOpenSettings,
     onHistory,
     onImportJSON,
+    children,
 }: TopNavMenuPanelProps): React.ReactElement {
     const { t } = useTranslation();
     const { resolvedTheme, setTheme } = useTheme();
@@ -37,7 +39,9 @@ export function TopNavMenuPanel({
                 onClick={onClose}
                 aria-label="Close menu"
             />
-            <div className="absolute top-full left-0 mt-3 w-56 bg-[var(--brand-surface)]/94 backdrop-blur-xl rounded-[var(--radius-lg)] shadow-[var(--shadow-md)] border border-[var(--color-brand-border)]/80 ring-1 ring-black/5 p-2 flex flex-col gap-1 z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-left">
+            <div className="absolute top-full left-0 mt-3 min-w-[20rem] w-max max-w-lg bg-[var(--brand-surface)]/94 backdrop-blur-xl rounded-[var(--radius-lg)] shadow-[var(--shadow-md)] border border-[var(--color-brand-border)]/80 ring-1 ring-black/5 p-2 flex flex-col gap-1 z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-left">
+                {children}
+                
                 <div className="px-3 py-2 text-xs font-bold text-[var(--brand-secondary)] uppercase tracking-widest">
                     {t('nav.menu', 'Menu')}
                 </div>

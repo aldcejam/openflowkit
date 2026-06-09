@@ -3,10 +3,9 @@ import type { EditorPage } from '@/store/editorPageHooks';
 import type { CinematicExportRequest } from '@/services/export/cinematicExport';
 import { FlowTabs } from './FlowTabs';
 import { TopNavMenu } from './top-nav/TopNavMenu';
-import { TopNavBrand } from './top-nav/TopNavBrand';
 import { TopNavActions } from './top-nav/TopNavActions';
 import { useTopNavState } from './top-nav/useTopNavState';
-import { APP_NAME, IS_BEVELED } from '@/lib/brand';
+import { IS_BEVELED } from '@/lib/brand';
 
 const OPEN_AI_SETTINGS_EVENT = 'open-ai-settings';
 
@@ -112,9 +111,9 @@ export function TopNav({
     }, [openAISettings]);
 
     return (
-        <div className="absolute top-0 left-0 right-0 z-50 flex h-14 items-center justify-between border-b border-[var(--color-brand-border)]/70 bg-[var(--brand-surface)]/70 px-3 shadow-sm backdrop-blur-md transition-all sm:px-4">
-            {/* Left: Menu & Brand */}
-            <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
+        <div className="absolute top-4 left-4 z-50 pointer-events-none">
+            {/* Left: Menu Only */}
+            <div className="flex items-center pointer-events-auto bg-[var(--brand-surface)]/90 backdrop-blur-md shadow-sm border border-[var(--color-brand-border)] rounded-[var(--radius-lg)] p-1">
                 <TopNavMenu
                     isOpen={isMenuOpen}
                     isBeveled={isBeveled}
@@ -124,49 +123,42 @@ export function TopNav({
                     onOpenSettings={openCanvasSettings}
                     onHistory={onHistory}
                     onImportJSON={onImportJSON}
-                />
-                <TopNavBrand
-                    appName={APP_NAME}
-                    logoUrl={null}
-                    logoStyle="text"
-                    ui={{ showBeta: true }}
-                />
-            </div>
-
-            {/* Center: Tabs */}
-            <div className="flex min-w-0 flex-[1.2] justify-center px-2 sm:px-3">
-                <FlowTabs
-                    pages={pages}
-                    activePageId={activePageId}
-                    onSwitchPage={onSwitchPage}
-                    onAddPage={onAddPage}
-                    onClosePage={onClosePage}
-                    onRenamePage={onRenamePage}
-                    onReorderPage={onReorderPage}
-                />
-            </div>
-
-            <div className="flex min-w-0 flex-1 justify-end">
-                <TopNavActions
-                    onPlay={onPlay}
-                    onExportPNG={onExportPNG}
-                    onCopyImage={onCopyImage}
-                    onExportSVG={onExportSVG}
-                    onCopySVG={onCopySVG}
-                    onExportPDF={onExportPDF}
-                    onExportCinematic={onExportCinematic}
-                    onExportJSON={onExportJSON}
-                    onCopyJSON={onCopyJSON}
-                    onExportMermaid={onExportMermaid}
-                    onDownloadMermaid={onDownloadMermaid}
-                    onDownloadPlantUML={onDownloadPlantUML}
-                    onExportOpenFlowDSL={onExportOpenFlowDSL}
-                    onDownloadOpenFlowDSL={onDownloadOpenFlowDSL}
-                    onExportFigma={onExportFigma}
-                    onDownloadFigma={onDownloadFigma}
-                    collaboration={collaboration}
-                    isBeveled={isBeveled}
-                />
+                >
+                    <div className="p-2 border-b border-[var(--color-brand-border)]">
+                        <FlowTabs
+                            pages={pages}
+                            activePageId={activePageId}
+                            onSwitchPage={onSwitchPage}
+                            onAddPage={onAddPage}
+                            onClosePage={onClosePage}
+                            onRenamePage={onRenamePage}
+                            onReorderPage={onReorderPage}
+                        />
+                    </div>
+                    
+                    <div className="p-2 border-b border-[var(--color-brand-border)]">
+                        <TopNavActions
+                            onPlay={onPlay}
+                            onExportPNG={onExportPNG}
+                            onCopyImage={onCopyImage}
+                            onExportSVG={onExportSVG}
+                            onCopySVG={onCopySVG}
+                            onExportPDF={onExportPDF}
+                            onExportCinematic={onExportCinematic}
+                            onExportJSON={onExportJSON}
+                            onCopyJSON={onCopyJSON}
+                            onExportMermaid={onExportMermaid}
+                            onDownloadMermaid={onDownloadMermaid}
+                            onDownloadPlantUML={onDownloadPlantUML}
+                            onExportOpenFlowDSL={onExportOpenFlowDSL}
+                            onDownloadOpenFlowDSL={onDownloadOpenFlowDSL}
+                            onExportFigma={onExportFigma}
+                            onDownloadFigma={onDownloadFigma}
+                            collaboration={collaboration}
+                            isBeveled={isBeveled}
+                        />
+                    </div>
+                </TopNavMenu>
             </div>
 
             {isSettingsOpen ? (

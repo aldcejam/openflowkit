@@ -1,6 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { ErrorBoundary } from './ErrorBoundary';
 import { RightRail } from './RightRail';
+import { LeftFloatingPanel } from './LeftFloatingPanel';
 import type { FlowEdge, FlowNode, FlowSnapshot } from '@/lib/types';
 import type { ChatMessage } from '@/services/aiService';
 import type { AssistantThreadItem } from '@/services/flowpilot/types';
@@ -455,16 +456,16 @@ export function FlowEditorPanels({
         <ErrorBoundary
           className="h-full"
           fallback={
-            <RightRail>
+            <LeftFloatingPanel>
               <PanelErrorFallback
                 title="Properties unavailable"
                 description="The properties rail failed to render. Close it and reopen after the current edit."
                 onClose={properties.onClose}
               />
-            </RightRail>
+            </LeftFloatingPanel>
           }
         >
-          <RightRail>
+          <LeftFloatingPanel>
             <Suspense fallback={<RailPanelSkeleton title="Properties" lines={5} />}>
               <LazyPropertiesPanel
                 selectedNodes={properties.selectedNodes}
@@ -493,7 +494,7 @@ export function FlowEditorPanels({
                 onClose={properties.onClose}
               />
             </Suspense>
-          </RightRail>
+          </LeftFloatingPanel>
         </ErrorBoundary>
       ) : null}
     </>

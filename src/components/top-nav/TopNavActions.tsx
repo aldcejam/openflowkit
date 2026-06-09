@@ -145,7 +145,7 @@ export function TopNavActions({
     };
 
     return (
-        <div className="flex min-w-0 items-center justify-end gap-2 sm:gap-3">
+        <div className="flex min-w-0 flex-wrap items-center justify-start gap-2 sm:gap-3">
             <div className="flex items-center gap-1.5 sm:gap-2">
                 {collaboration && (
                     <div className="mr-1 hidden items-center gap-2 border-r border-[var(--color-brand-border)]/80 pr-3 md:flex">

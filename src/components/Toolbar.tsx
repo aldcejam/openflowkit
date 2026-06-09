@@ -101,7 +101,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     .join(' ');
 
   return (
-    <div className={`absolute bottom-8 left-1/2 -translate-x-1/2 z-40 ${containerClasses}`}>
+    <div className={`absolute top-4 left-1/2 -translate-x-1/2 z-40 ${containerClasses}`}>
       {/* Group 1: Tools */}
       <ToolbarModeControls
         isInteractive={isInteractive}

@@ -15,6 +15,7 @@ interface TopNavMenuProps {
     onOpenSettings: () => void;
     onHistory: () => void;
     onImportJSON: () => void;
+    children?: React.ReactNode;
 }
 
 export function TopNavMenu({
@@ -26,6 +27,7 @@ export function TopNavMenu({
     onOpenSettings,
     onHistory,
     onImportJSON,
+    children,
 }: TopNavMenuProps): React.ReactElement {
     const menuRef = useRef<HTMLDivElement>(null);
     const buttonClassName = isOpen
@@ -79,7 +81,9 @@ export function TopNavMenu({
                         onOpenSettings={onOpenSettings}
                         onHistory={onHistory}
                         onImportJSON={onImportJSON}
-                    />
+                    >
+                        {children}
+                    </LazyTopNavMenuPanel>
                 </Suspense>
             )}
         </div>

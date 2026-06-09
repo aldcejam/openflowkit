@@ -254,7 +254,7 @@ export function FlowEditorChrome({
         </Suspense>
       )}
 
-      <div className={`flex min-h-0 flex-1 min-w-0 ${presentationMode ? 'pt-0' : 'pt-14'}`}>
+      <div className="flex min-h-0 flex-1 min-w-0 pt-0">
         <div className="relative min-w-0 flex-1">
           <ErrorBoundary className="h-full">{canvas}</ErrorBoundary>
           <Suspense fallback={null}>

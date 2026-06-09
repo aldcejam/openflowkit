@@ -28,7 +28,7 @@ export function ToolbarAddMenuPanel({
   }, [items, sections]);
 
   return (
-    <div className="absolute bottom-full left-1/2 mb-3 w-64 -translate-x-1/2 rounded-[var(--radius-lg)] border border-[var(--color-brand-border)]/80 bg-[var(--brand-surface)]/95 p-2 shadow-[var(--shadow-md)] ring-1 ring-black/5 backdrop-blur-md animate-in slide-in-from-bottom-4 zoom-in-95 duration-200 origin-bottom pointer-events-auto max-h-[70vh] overflow-y-auto custom-scrollbar">
+    <div className="absolute top-full left-1/2 mt-3 w-64 -translate-x-1/2 rounded-[var(--radius-lg)] border border-[var(--color-brand-border)]/80 bg-[var(--brand-surface)]/95 p-2 shadow-[var(--shadow-md)] ring-1 ring-black/5 backdrop-blur-md animate-in slide-in-from-top-4 zoom-in-95 duration-200 origin-top pointer-events-auto max-h-[70vh] overflow-y-auto custom-scrollbar">
       {itemsBySection.map((section) => (
         <div key={section.id} className="mb-2 last:mb-0">
           <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-[var(--brand-secondary)]">
